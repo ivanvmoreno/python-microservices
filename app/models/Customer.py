@@ -2,13 +2,13 @@ from config import db, ma
 
 class Customer(db.Model):
     __tablename__ = "customers"
-    customerId = Column(db.Integer, primary_key=True, nullable=False)
+    customer_id = Column(db.Integer, primary_key=True, nullable=False)
     name = Column(db.String(32), nullable=False)
     email = Column(db.String(32), nullable=False)
     phone = Column(db.Integer, nullable=False)
-    billingAddress = Column(db.String(32), nullable=False)
-    shippingAddress = Column(db.String(32), nullable=False)
-    creditStanding = Column(db.Float, nullable=False)
+    billing_address = Column(db.String(32), nullable=False)
+    shipping_address = Column(db.String(32), nullable=False)
+    credit_standing = Column(db.Float, nullable=False)
 
 class CustomerSchema(ma.ModelSchema):
     class Meta:
