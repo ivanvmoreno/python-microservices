@@ -1,5 +1,5 @@
 from config import db
-from .models.Product import Product, ProductSchema
+from .models.products_db.Product import Product, ProductSchema
 
 def get_product(product_id) {
     """
