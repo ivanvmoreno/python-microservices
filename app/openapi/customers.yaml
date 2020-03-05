@@ -1,0 +1,132 @@
+openapi: 3.0.0
+
+info:
+  description: OpenAPI specification for the customers service
+  version: 1.0.0
+  title: Customers service OpenAPI contract
+
+servers:
+  - url: https://api.example.com/customer
+
+paths:
+  /:
+    post:
+      operationId: customers_api.add_customer
+      tags:
+        - Customers
+      requestBody:
+        $ref: '#/components/requestBodies/CreateCustomer'
+      responses:
+        201:
+          description: Returns the new customer
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/CustomerProperties'
+                  - $ref: '#/components/schemas/CustomerRequiredProperties'
+        409:
+          description: A customer with ID {customer_id} already exists
+  /{customer_id}:
+    get:
+      operationId: customers_api.get_customer
+      tags:
+        - Customers
+      summary: Creates a new customer based on the received data
+      parameters:
+        - $ref: '#/components/parameters/customer_id'
+      responses:
+        200:
+          description: Returns existing customer
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/CustomerProperties'
+                  - $ref: '#/components/schemas/CustomerRequiredProperties'
+        404: 
+          description: Customer with ID {customer_id} not found
+    put:
+      operationId: customers_api.update_customer
+      tags:
+        - Customers
+      summary: Updates an existing customer based on the received data
+      parameters:
+        - $ref: '#/components/parameters/customer_id'
+      responses:
+        204:
+          description: Returns updated customer
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/CustomerProperties'
+                  - $ref: '#/components/schemas/CustomerRequiredProperties'
+        404:
+          description: Customer with ID {customer_id} not found
+    delete:
+      operationId: customers_api.delete_customer
+      tags:
+        - Customers
+      summary: Deletes a customer
+      parameters:
+        - $ref: '#/components/parameters/customer_id'
+      responses:
+        202:
+          description: Customer deleted successfully
+        404:
+          description: Customer with ID {customer_id} not found
+
+            
+components:
+  parameters:
+    customer_id:
+      name: customer_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/id'
+  requestBodies:
+    CreateCustomer:
+      description: Create a new customer
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/CustomerProperties'
+              - $ref: '#/components/schemas/CustomerRequiredProperties'
+  schemas:
+    CustomerProperties:
+      type: object
+      properties:
+        customer_id:
+          $ref: '#/components/schemas/id'
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: integer
+          format: int32
+        billing_address:
+          type: string
+        shipping_address:
+          type: string
+        credit_standing:
+          type: number
+          format: float
+    CustomerRequiredProperties:
+      type: object
+      required:
+        - customer_id
+        - name
+        - billing_address
+        - shipping_address
+        - credit_standing
+    Customer:
+      allOf:
+        - $ref: '#/components/schemas/CustomerProperties'
+        - $ref: '#/components/schemas/CustomerRequiredProperties'
+    id:
+      type: integer
+      format: int32
