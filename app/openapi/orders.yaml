@@ -1,26 +1,199 @@
-swagger: "2.0"
+openapi: 3.0.0
 
 info:
-  title: "Order API"
-  version: "1.0"
+  description: OpenAPI specification for the orders service
+  version: 1.0.0
+  title: Orders service OpenAPI contract
 
-basePath: /v1.0
+servers:
+  - url: https://api.example.com/orders
 
 paths:
   /:
-    get:
+    post:
+      operationId: orders_api.add_order
+      tags:
+        - Orders
+      requestBody:
+        $ref: '#/components/requestBodies/CreateOrder'
       responses:
-        '200':
-          description: 'Fetch an order by its ID'
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Item'
+        201:
+          description: Returns the new order
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/OrderProperties'
+                  - $ref: '#/components/schemas/OrderRequiredProperties'
+        409:
+          description: A order with ID {order_id} already exists
+  /{order_id}:
+    get:
+      operationId: orders_api.get_order
+      tags:
+        - Orders
+      summary: Fetches an order
+      parameters:
+        - $ref: '#/components/parameters/order_id'
+      responses:
+        200:
+          description: Returns existing order
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/OrderProperties'
+                  - $ref: '#/components/schemas/OrderRequiredProperties'
+        404: 
+          description: Order with ID {order_id} not found
+    put:
+      operationId: orders_api.update_order
+      tags:
+        - Orders
+      summary: Updates an existing order based on the received data
+      parameters:
+        - $ref: '#/components/parameters/order_id'
+      responses:
+        204:
+          description: Returns updated order
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/OrderProperties'
+                  - $ref: '#/components/schemas/OrderRequiredProperties'
+        404:
+          description: Order with ID {order_id} not found
+    delete:
+      operationId: orders_api.delete_order
+      tags:
+        - Orders
+      summary: Deletes a order
+      parameters:
+        - $ref: '#/components/parameters/order_id'
+      responses:
+        202:
+          description: Order deleted successfully
+        404:
+          description: Order with ID {order_id} not found
+  /{order_id}/products/:
+    post:
+      operationId: orders_api.add_product_to_order
+      tags:
+        - Orders
+        - products
+      summary: Adds an existing product to an order
+      parameters:
+        - $ref: '#/components/parameters/order_id'
+      requestBody:
+        description: Product details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderProduct'
+      responses:
+        201:
+          description: Product added to order
+        404:
+          description: Order with ID {order_id} not found
+    put:
+      operationId: orders_api.update_order_product
+      tags: 
+        - Orders
+        - products
+      summary: Updates an order product quantity
+      parameters:
+        - $ref: '#/components/parameters/order_id'
+      requestBody:
+        description: Product details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderProduct'
+      responses:
+        200:
+          description: Updated product quantity
+        404: 
+          description: Product with ID {product_id} not found in order {order_id}
+  /{order_id}/products/{product_id}:
+    delete:
+      operationId: orders_api.delete_product_from_order
+      tags: 
+        - Orders
+        - products
+      summary: Updates an order product quantity
+      parameters:
+        - $ref: '#/components/parameters/order_id'
+        - $ref: '#/components/parameters/product_id'
+      responses:
+        202:
+          description: Product {product_id} removed from order {order_id}
+        404:
+          description: Product with ID {product_id} not found in order {order_id}
 
-definitions:
-  Order:
-    type: object
-    properties:
-      id:
-        type: integer
-      name: { type: string }
+components:
+  parameters:
+    order_id:
+      name: order_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/id'
+    product_id:
+      name: product_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/id'
+  requestBodies:
+    CreateOrder:
+      description: Create a new order
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/OrderProperties'
+              - $ref: '#/components/schemas/OrderRequiredProperties'
+  schemas:
+    OrderProperties:
+      type: object
+      properties:
+        order_id:
+          $ref: '#/components/schemas/id'
+        customer_id:
+          $ref: '#/components/schemas/id'
+        date:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - cancelled
+            - paid
+            - shipped
+            - completed
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderProduct'
+    OrderRequiredProperties:
+      type: object
+      required:
+        - order_id
+        - customer_id
+        - date
+        - status
+    OrderProduct:
+      type: object
+      properties:
+        product_id:
+          $ref: '#/components/schemas/id'
+        quantity:
+          type: integer
+          format: int32
+      required:
+        - product_id
+        - quantity
+    id:
+      type: integer
+      format: int32

@@ -24,7 +24,7 @@ def add_order(order) {
     :param order:   order data for creation
     :return:        order on success, 409 on already exists
     """
-    order_id = order.get('id')
+    order_id = order.get('order_id')
 
     existing_order = Order.query \
         .filter(Order.order_id == order_id) \
@@ -39,29 +39,31 @@ def add_order(order) {
         abort(409, f'An order with ID {order_id} already exists')
 }
 
-def add_product_to_order(order_id, product_id, quantity) {
+def add_product_to_order(order_id, body) {
     """
     Adds a product to an existing order
     :param order_id:    order ID
-    :param product_id:  product ID
-    :param quantity:    product quantity
     :return:            200 on product added, 
                         404 on order / product not found, 
                         409 on product not available
     """
-    order_id = order.get('id')
-
     existing_order = Order.query \
         .filter(Order.order_id == order_id) \
         .one_or_none()
 
-    if existing_order is None:
-        new_order = OrderSchema().load(order).data
-        db.session.add(new_order)
+    # TODO: check for product availability
+    if existing_order is not None:
+        new_order_product = OrderProductSchema() \
+            .load({ 
+                order_id: order_id, 
+                product_id: body.get('product_id'),
+                quantity: body.get('quantity') }) \
+            .data
+        db.session.add(new_order_product)
         db.session.commit()
-        return OrderSchema().dump(new_order).data, 201
+        return 201
     else:
-        abort(409, f'An order with ID {order_id} already exists')
+        abort(404, f'Order with ID {order_id} not found')
 }
 
 def update_order(order_id, order_data) {
@@ -84,7 +86,7 @@ def update_order(order_id, order_data) {
         abort(404, f'Order with ID {order_id} not found')
 }
 
-def update_order_product(order_id, product_id, new_quantity) {
+def update_order_product(order_id, body) {
     """
     Updates quantity of an order product
     :param order_id:        order ID
@@ -95,6 +97,9 @@ def update_order_product(order_id, product_id, new_quantity) {
                             409 on product not available
 
     """
+    product_id = body.get('product_id')
+    new_quantity = body.get('product_quantity')
+    
     order_product = OrderProduct.query \
         .filter(OrderProduct.order_id == order_id && OrderProduct.product_id == product_id) \
         .one_or_none()
