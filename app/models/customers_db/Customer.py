@@ -8,7 +8,7 @@ class Customer(db.Model):
     phone = Column(db.Integer)
     billing_address = Column(db.String(32), nullable=False)
     shipping_address = Column(db.String(32), nullable=False)
-    credit_standing = Column(db.Float, default=0.00)
+    credit_standing = Column(db.Float, default=0.00, nullable=False)
 
 class CustomerSchema(ma.ModelSchema):
     class Meta:

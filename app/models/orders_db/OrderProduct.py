@@ -10,7 +10,7 @@ class OrderProduct(db.Model):
     due to being stored in an independent service persistence layer
     """
     product_id = Column(db.Integer, primary_key=True, nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
+    quantity = db.Column(db.Integer, default=0, nullable=False)
 
 class OrderProductSchema(ma.ModelSchema):
     class Meta:

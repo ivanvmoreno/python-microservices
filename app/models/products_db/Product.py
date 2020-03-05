@@ -6,8 +6,8 @@ class Product(db.Model):
     name = Column(db.String(32), nullable=False)
     price = Column(db.Float, nullable=False)
     category = Column(db.String(32))
-    stock_items = Column(db.Integer, default=0)
-    reserved_items = Column(db.Integer, default=0)
+    stock_items = Column(db.Integer, default=0, nullable=False)
+    reserved_items = Column(db.Integer, default=0, nullable=False)
 
 class ProductSchema(ma.ModelSchema):
     class Meta:
