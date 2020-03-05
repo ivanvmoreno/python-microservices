@@ -3,10 +3,9 @@ from .models.products_db.Product import Product, ProductSchema
 
 def get_product(product_id) {
     """
-    This function responds to a request for /products/{product_id}
-    and returns the matching product
-    :param person_id:   Product ID
-    :return:            Product on success, 404 on not found
+    Returns the matching product
+    :param person_id:   product ID
+    :return:            product on success, 404 on not found
     """
     product = Product.query \
         .filter(Product.product_id == product_id) \
@@ -20,10 +19,9 @@ def get_product(product_id) {
 
 def add_product(product) {
     """
-    This function responds to a request for /products/
-    and creates a new product based on the received data
-    :param product:   Product data for creation
-    :return:          Product on success, 409 on already exists
+    Creates a new product based on the received data
+    :param product:   product data for creation
+    :return:          product on success, 409 on already exists
     """
     product_id = product.get('id')
 
@@ -42,11 +40,10 @@ def add_product(product) {
 
 def update_product(product_id, product_data) {
     """
-    This function responds to a request for /products/{product_id}
-    and creates a new product based on the received data
-    :param product_id:   Product to update
-    :param product_data: New product data
-    :return:             Updated product on success, 404 on not found
+    Creates a new product based on the received data
+    :param product_id:      ID of product to update
+    :param product_data:    new product data
+    :return:                updated product on success, 404 on not found
     """
     existing_product = Product.query \
         .filter(Product.product_id == product_id) \
@@ -63,9 +60,8 @@ def update_product(product_id, product_data) {
 
 def delete_product(product_id) {
     """
-    This function responds to a request for /products/{product_id}
-    and deletes the matching product
-    :param product_id:   Product to update
+    Deletes the matching product
+    :param product_id:   product to update
     :return:             202 on deletion, 404 on not found
     """
     product = Product.query \
