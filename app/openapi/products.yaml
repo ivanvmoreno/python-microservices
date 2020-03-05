@@ -1,0 +1,125 @@
+openapi: 3.0.0
+
+info:
+  description: OpenAPI specification for the products service
+  version: 1.0.0
+  title: Products service OpenAPI contract
+
+servers:
+  - url: https://api.example.com/products
+
+paths:
+  /:
+    post:
+      operationId: products_api.add_product
+      tags:
+        - Products
+      requestBody:
+        $ref: '#/components/requestBodies/CreateProduct'
+      responses:
+        201:
+          description: Returns the new product
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ProductProperties'
+                  - $ref: '#/components/schemas/ProductRequiredProperties'
+        409:
+          description: A product with ID {product_id} already exists
+  /{product_id}:
+    get:
+      operationId: products_api.get_product
+      tags:
+        - Products
+      summary: Creates a new product based on the received data
+      parameters:
+        - $ref: '#/components/parameters/product_id'
+      responses:
+        200:
+          description: Returns existing product
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ProductProperties'
+                  - $ref: '#/components/schemas/ProductRequiredProperties'
+        404: 
+          description: Product with ID {product_id} not found
+    put:
+      operationId: products_api.update_product
+      tags:
+        - Products
+      summary: Updates an existing product based on the received data
+      parameters:
+        - $ref: '#/components/parameters/product_id'
+      responses:
+        204:
+          description: Returns updated product
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ProductProperties'
+                  - $ref: '#/components/schemas/ProductRequiredProperties'
+        404:
+          description: Product with ID {product_id} not found
+    delete:
+      operationId: products_api.delete_product
+      tags:
+        - Products
+      summary: Deletes a product
+      parameters:
+        - $ref: '#/components/parameters/product_id'
+      responses:
+        202:
+          description: Product deleted successfully
+        404:
+          description: Product with ID {product_id} not found
+
+            
+components:
+  parameters:
+    product_id:
+      name: product_id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/id'
+  requestBodies:
+    CreateProduct:
+      description: Create a new product
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/ProductProperties'
+              - $ref: '#/components/schemas/ProductRequiredProperties'
+  schemas:
+    ProductProperties:
+      type: object
+      properties:
+        product_id:
+          $ref: '#/components/schemas/id'
+        name:
+          type: string
+        price:
+          type: number
+          format: float
+        category:
+          type: string
+        stock_items:
+          type: integer
+          format: int32
+        reserved_items:
+          type: integer
+          format: int32
+    ProductRequiredProperties:
+      type: object
+      required:
+        - product_id
+        - name
+        - price
+    id:
+      type: integer
+      format: int32
