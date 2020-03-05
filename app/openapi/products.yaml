@@ -32,7 +32,7 @@ paths:
       operationId: products_api.get_product
       tags:
         - Products
-      summary: Creates a new product based on the received data
+      summary: Fetches a product
       parameters:
         - $ref: '#/components/parameters/product_id'
       responses:
@@ -76,8 +76,7 @@ paths:
           description: Product deleted successfully
         404:
           description: Product with ID {product_id} not found
-
-            
+  
 components:
   parameters:
     product_id:

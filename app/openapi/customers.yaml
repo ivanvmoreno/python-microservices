@@ -6,7 +6,7 @@ info:
   title: Customers service OpenAPI contract
 
 servers:
-  - url: https://api.example.com/customer
+  - url: https://api.example.com/customers
 
 paths:
   /:
@@ -32,7 +32,7 @@ paths:
       operationId: customers_api.get_customer
       tags:
         - Customers
-      summary: Creates a new customer based on the received data
+      summary: Fetches a customer
       parameters:
         - $ref: '#/components/parameters/customer_id'
       responses:
@@ -76,8 +76,7 @@ paths:
           description: Customer deleted successfully
         404:
           description: Customer with ID {customer_id} not found
-
-            
+   
 components:
   parameters:
     customer_id:
@@ -123,10 +122,6 @@ components:
         - billing_address
         - shipping_address
         - credit_standing
-    Customer:
-      allOf:
-        - $ref: '#/components/schemas/CustomerProperties'
-        - $ref: '#/components/schemas/CustomerRequiredProperties'
     id:
       type: integer
       format: int32
