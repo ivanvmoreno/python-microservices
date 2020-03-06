@@ -1,7 +1,7 @@
-from config import db
+from .config import db
 from .models.products_db.Product import Product, ProductSchema
 
-def get_product(product_id) {
+def get_product(product_id):
     """
     Returns the matching product
     :param person_id:   product ID
@@ -15,9 +15,9 @@ def get_product(product_id) {
         return ProductSchema().dump(product).data, 200
     else:
         abort(404, f'Product with ID {product_id} not found')
-}
 
-def add_product(product) {
+
+def add_product(product):
     """
     Creates a new product based on the received data
     :param product:   product data for creation
@@ -36,9 +36,9 @@ def add_product(product) {
         return ProductSchema().dump(new_product).data, 201
     else:
         abort(409, f'A product with ID {product_id} already exists')
-}
 
-def update_product(product_id, product_data) {
+
+def update_product(product_id, product_data):
     """
     Creates a new product based on the received data
     :param product_id:      ID of product to update
@@ -56,9 +56,9 @@ def update_product(product_id, product_data) {
         return ProductSchema().dump(updated_product).data, 204
     else:
         abort(404, f'Product with ID {product_id} not found')
-}
 
-def delete_product(product_id) {
+
+def delete_product(product_id):
     """
     Deletes the matching product
     :param product_id:   product to update
@@ -74,4 +74,4 @@ def delete_product(product_id) {
         return 202
     else:
         abort(404, f'Product with ID {product_id} not found')
-}
+

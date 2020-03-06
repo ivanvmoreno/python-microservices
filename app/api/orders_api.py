@@ -1,8 +1,8 @@
-from config import db
+from .config import db
 from .models.orders_db.Order import Order, OrderSchema
 from .models.orders_db.OrderProduct import OrderProduct
 
-def get_order(order_id) {
+def get_order(order_id):
     """
     Returns the matching order
     :param order_id:    order ID
@@ -16,9 +16,9 @@ def get_order(order_id) {
         return OrderSchema().dump(order).data, 200
     else:
         abort(404, f'Order with ID {order_id} not found')
-}
 
-def add_order(order) {
+
+def add_order(order):
     """
     Creates a new order based on the received data
     :param order:   order data for creation
@@ -37,9 +37,9 @@ def add_order(order) {
         return OrderSchema().dump(new_order).data, 201
     else:
         abort(409, f'An order with ID {order_id} already exists')
-}
 
-def add_product_to_order(order_id, body) {
+
+def add_product_to_order(order_id, body):
     """
     Adds a product to an existing order
     :param order_id:    order ID
@@ -64,9 +64,9 @@ def add_product_to_order(order_id, body) {
         return 201
     else:
         abort(404, f'Order with ID {order_id} not found')
-}
 
-def update_order(order_id, order_data) {
+
+def update_order(order_id, order_data):
     """
     Creates a new order based on the received data
     :param order_id:    order ID
@@ -84,9 +84,9 @@ def update_order(order_id, order_data) {
         return OrderSchema().dump(updated_order).data, 204
     else:
         abort(404, f'Order with ID {order_id} not found')
-}
 
-def update_order_product(order_id, body) {
+
+def update_order_product(order_id, body):
     """
     Updates quantity of an order product
     :param order_id:        order ID
@@ -101,7 +101,7 @@ def update_order_product(order_id, body) {
     new_quantity = body.get('product_quantity')
     
     order_product = OrderProduct.query \
-        .filter(OrderProduct.order_id == order_id && OrderProduct.product_id == product_id) \
+        .filter(OrderProduct.order_id == order_id and OrderProduct.product_id == product_id) \
         .one_or_none()
 
     if order_product is not None:
@@ -112,9 +112,9 @@ def update_order_product(order_id, body) {
         return 200
     else:
         abort(404, f'Product with ID {product_id} not found in order {order_id}')
-}
 
-def delete_order(order_id) {
+
+def delete_order(order_id):
     """
     Deletes the matching order
     :param order_id:    order to update
@@ -130,9 +130,9 @@ def delete_order(order_id) {
         return 202
     else:
         abort(404, f'Order with ID {order_id} not found')
-}
 
-def delete_product_from_order(order_id, product_id) {
+
+def delete_product_from_order(order_id, product_id):
     """
     Deletes a product from an order
     :param order_id:    order ID
@@ -140,7 +140,7 @@ def delete_product_from_order(order_id, product_id) {
     :return:            202 on deletion, 404 on not found
     """
     order_product = OrderProduct.query \
-        .filter(OrderProduct.order_id == order_id && OrderProduct.product_id == product_id) \
+        .filter(OrderProduct.order_id == order_id and OrderProduct.product_id == product_id) \
         .one_or_none()
 
     if order_product is not None:
@@ -149,4 +149,4 @@ def delete_product_from_order(order_id, product_id) {
         return 202
     else:
         abort(404, f'Product with ID {product_id} not found in order {order_id}')
-}
+

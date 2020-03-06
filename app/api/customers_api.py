@@ -1,7 +1,7 @@
-from config import db
+from .config import db
 from .models.customers_db.Customer import Customer, CustomerSchema
 
-def get_customer(customer_id) {
+def get_customer(customer_id):
     """
     Returns the matching customer
     :param person_id:   customer ID
@@ -15,9 +15,9 @@ def get_customer(customer_id) {
         return CustomerSchema().dump(customer).data, 200
     else:
         abort(404, f'Customer with ID {customer_id} not found')
-}
 
-def add_customer(customer) {
+
+def add_customer(customer):
     """
     Creates a new customer based on the received data
     :param customer:    customer data for creation
@@ -36,9 +36,9 @@ def add_customer(customer) {
         return CustomerSchema().dump(new_customer).data, 201
     else:
         abort(409, f'A customer with ID {customer_id} already exists')
-}
 
-def update_customer(customer_id, customer_data) {
+
+def update_customer(customer_id, customer_data):
     """
     Creates a new customer based on the received data
     :param customer_id:     ID of customer to update
@@ -56,9 +56,9 @@ def update_customer(customer_id, customer_data) {
         return CustomerSchema().dump(updated_customer).data, 204
     else:
         abort(404, f'Customer with ID {customer_id} not found')
-}
 
-def delete_customer(customer_id) {
+
+def delete_customer(customer_id):
     """
     Deletes the matching customer
     :param customer_id:     customer to update
@@ -74,4 +74,4 @@ def delete_customer(customer_id) {
         return 202
     else:
         abort(404, f'Customer with ID {customer_id} not found')
-}
+
