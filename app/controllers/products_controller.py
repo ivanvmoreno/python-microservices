@@ -21,24 +21,25 @@ def add_product(product):
     :return:          product on success, 500 on error
     """
     try:
-        new_product = products_repository.add_product(product)
+        new_product = products_repository.add_product(ProductSchema().load(product, partial=True).data)
         return ProductSchema().dump(new_product).data, 200
     except ValueError as error:
         return f'Error while adding product {product_id}', 500
 
 
-def update_product(product_id, product_data):
+def update_product(product):
     """
     Creates a new product based on the received data
-    :param product_id:      ID of product to update
-    :param product_data:    new product data
-    :return:                updated product on success, 404 on not found
+    :param product: new product data
+    :return:        updated product on success, 404 on not found
     """
     try:
-        updated_product = products_repository.update_product(product_id, product_data)
+        # TODO: update openAPI endpoint definition
+        updated_product = products_repository.update_product(ProductSchema().load(product, partial=True).data)
         return ProductSchema().dump(updated_product).data, 200
     except ValueError as error:
         return f'Product with ID {product_id} not found', 404
+
 
 def delete_product(product_id):
     """
