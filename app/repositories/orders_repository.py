@@ -1,30 +1,20 @@
-from .config import db
-from .models.orders_db.Order import Order, OrderSchema
-from .models.orders_db.OrderProduct import OrderProduct
+from ..config import db
+from ..models.orders_db.Order import Order, OrderSchema
+from ..models.orders_db.OrderProduct import OrderProduct
 
 def get_order(order_id):
-    """
-    Returns the matching order
-    :param order_id:    order ID
-    :return:            order on success, 404 on not found
-    """
     order = Order.query \
         .filter(Order.order_id == order_id) \
         .one_or_none()
 
     if order is not None:
-        return OrderSchema().dump(order).data, 200
+        return order
     else:
-        abort(404, f'Order with ID {order_id} not found')
+        raise ValueError(f'Order with ID {order_id} not found')
 
 
 def add_order(order):
-    """
-    Creates a new order based on the received data
-    :param order:   order data for creation
-    :return:        order on success, 409 on already exists
-    """
-    order_id = order.get('order_id')
+    # TODO: generate order ID
 
     existing_order = Order.query \
         .filter(Order.order_id == order_id) \
@@ -34,9 +24,9 @@ def add_order(order):
         new_order = OrderSchema().load(order).data
         db.session.add(new_order)
         db.session.commit()
-        return OrderSchema().dump(new_order).data, 201
+        return new_order
     else:
-        abort(409, f'An order with ID {order_id} already exists')
+        raise ValueError(f'An order with ID {order_id} already exists')
 
 
 def add_product_to_order(order_id, body):
@@ -67,12 +57,6 @@ def add_product_to_order(order_id, body):
 
 
 def update_order(order_id, order_data):
-    """
-    Creates a new order based on the received data
-    :param order_id:    order ID
-    :param order_data:  new order data
-    :return:            updated order on success, 404 on not found
-    """
     existing_order = Order.query \
         .filter(Order.order_id == order_id) \
         .one_or_none()
@@ -81,9 +65,9 @@ def update_order(order_id, order_data):
         updated_order = OrderSchema().load(order_data, instance=existing_order, partial=True).data
         db.session.add(updated_order)
         db.session.commit()
-        return OrderSchema().dump(updated_order).data, 204
+        return updated_order
     else:
-        abort(404, f'Order with ID {order_id} not found')
+        raise ValueError(f'Order with ID {order_id} not found')
 
 
 def update_order_product(order_id, body):

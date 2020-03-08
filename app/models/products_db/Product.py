@@ -1,4 +1,4 @@
-from ..config import db, ma
+from ...config import db, ma
 
 class Product(db.Model):
     __tablename__ = "products"

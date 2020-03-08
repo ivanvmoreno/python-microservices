@@ -11,7 +11,7 @@ servers:
 paths:
   /:
     post:
-      operationId: orders_api.add_order
+      operationId: orders_controller.add_order
       tags:
         - Orders
       requestBody:
@@ -29,7 +29,7 @@ paths:
           description: A order with ID {order_id} already exists
   /{order_id}:
     get:
-      operationId: orders_api.get_order
+      operationId: orders_controller.get_order
       tags:
         - Orders
       summary: Fetches an order
@@ -47,7 +47,7 @@ paths:
         404: 
           description: Order with ID {order_id} not found
     put:
-      operationId: orders_api.update_order
+      operationId: orders_controller.update_order
       tags:
         - Orders
       summary: Updates an existing order based on the received data
@@ -65,7 +65,7 @@ paths:
         404:
           description: Order with ID {order_id} not found
     delete:
-      operationId: orders_api.delete_order
+      operationId: orders_controller.delete_order
       tags:
         - Orders
       summary: Deletes a order
@@ -78,7 +78,7 @@ paths:
           description: Order with ID {order_id} not found
   /{order_id}/products/:
     post:
-      operationId: orders_api.add_product_to_order
+      operationId: orders_controller.add_product_to_order
       tags:
         - Orders
         - products
@@ -97,7 +97,7 @@ paths:
         404:
           description: Order with ID {order_id} not found
     put:
-      operationId: orders_api.update_order_product
+      operationId: orders_controller.update_order_product
       tags: 
         - Orders
         - products
@@ -117,7 +117,7 @@ paths:
           description: Product with ID {product_id} not found in order {order_id}
   /{order_id}/products/{product_id}:
     delete:
-      operationId: orders_api.delete_product_from_order
+      operationId: orders_controller.delete_product_from_order
       tags: 
         - Orders
         - products

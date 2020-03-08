@@ -11,7 +11,7 @@ servers:
 paths:
   /:
     post:
-      operationId: products_api.add_product
+      operationId: products_controller.add_product
       tags:
         - Products
       requestBody:
@@ -29,7 +29,7 @@ paths:
           description: A product with ID {product_id} already exists
   /{product_id}:
     get:
-      operationId: products_api.get_product
+      operationId: products_controller.get_product
       tags:
         - Products
       summary: Fetches a product
@@ -47,7 +47,7 @@ paths:
         404: 
           description: Product with ID {product_id} not found
     put:
-      operationId: products_api.update_product
+      operationId: products_controller.update_product
       tags:
         - Products
       summary: Updates an existing product based on the received data
@@ -65,7 +65,7 @@ paths:
         404:
           description: Product with ID {product_id} not found
     delete:
-      operationId: products_api.delete_product
+      operationId: products_controller.delete_product
       tags:
         - Products
       summary: Deletes a product

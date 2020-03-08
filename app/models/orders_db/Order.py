@@ -1,15 +1,16 @@
 from enum import Enum
-from ..config import db, ma
+from ...config import db, ma
 from datetime import datetime
 
 """ 
 Aliasing order status codes using an Enum
-1 - cancelled
-2 - paid
-3 - shipped
-4 - completed
+1 - pending
+2 - cancelled
+3 - paid
+4 - shipped
+5 - completed
 """
-order_status = Enum('cancelled', 'paid', 'shipped', 'completed')
+OrderStatus = Enum('pending', 'cancelled', 'paid', 'shipped', 'completed')
 
 class Order(db.Model):
     __tablename__ = "orders"
@@ -20,7 +21,7 @@ class Order(db.Model):
     """
     customer_id = db.Column(db.Integer, nullable=False)
     date = Column(db.DateTime, default=datetime.now(), nullable=False)
-    status = Column(order_status, nullable=False)
+    status = Column(OrderStatus, default=OrderStatus.pending, nullable=False)
 
 class OrderSchema(ma.ModelSchema):
     class Meta:

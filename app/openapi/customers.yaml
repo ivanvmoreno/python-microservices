@@ -11,7 +11,7 @@ servers:
 paths:
   /:
     post:
-      operationId: customers_api.add_customer
+      operationId: customers_controller.add_customer
       tags:
         - Customers
       requestBody:
@@ -29,7 +29,7 @@ paths:
           description: A customer with ID {customer_id} already exists
   /{customer_id}:
     get:
-      operationId: customers_api.get_customer
+      operationId: customers_controller.get_customer
       tags:
         - Customers
       summary: Fetches a customer
@@ -47,7 +47,7 @@ paths:
         404: 
           description: Customer with ID {customer_id} not found
     put:
-      operationId: customers_api.update_customer
+      operationId: customers_controller.update_customer
       tags:
         - Customers
       summary: Updates an existing customer based on the received data
@@ -65,7 +65,7 @@ paths:
         404:
           description: Customer with ID {customer_id} not found
     delete:
-      operationId: customers_api.delete_customer
+      operationId: customers_controller.delete_customer
       tags:
         - Customers
       summary: Deletes a customer

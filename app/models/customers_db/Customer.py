@@ -1,4 +1,4 @@
-from ..config import db, ma
+from ...config import db, ma
 
 class Customer(db.Model):
     __tablename__ = "customers"
