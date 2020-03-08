@@ -21,10 +21,10 @@ def add_customer(customer):
     :return:            customer on success, 500 on error
     """
     try:
-        new_customer = customers_repository.add_customer(CustomerSchema().load(customer).data)
+        new_customer = customers_repository.add_customer(CustomerSchema().load(customer, partial=True).data)
         return CustomerSchema().dump(new_customer).data, 201
     except ValueError as error:
-        return f'Error while storing customer', 500
+        return f'Error when storing customer', 500
     
 
 def update_customer(customer):
@@ -35,7 +35,7 @@ def update_customer(customer):
     """
     try:
         # TODO: update openAPI endpoint definition 
-        updated_customer = customers_repository.update_customer(CustomerSchema().load(customer).data)
+        updated_customer = customers_repository.update_customer(CustomerSchema().load(customer, partial=True).data)
         return CustomerSchema().dump(updated_customer).data, 201
     except ValueError as error:
         return f'Customer with ID {customer_id} not found', 404

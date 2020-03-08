@@ -13,27 +13,16 @@ def get_customer(customer_id):
 
 
 def add_customer(customer):
-    try:
-        # TODO: generate customer ID
-        db.session.add(customer)
-        db.session.commit()
-        return customer
-    else:
-        raise ValueError(f'Error while storing customer')
+    # TODO: generate customer ID
+    db.session.add(customer)
+    db.session.commit()
+    return customer
 
 
 def update_customer(customer):
-    existing_customer = Customer.query \
-        .filter(Customer.customer_id == customer.customer_id) \
-        .one_or_none()
-
-    if existing_customer is not None:
-        updated_customer = CustomerSchema().load(customer, instance=existing_customer, partial=True).data
-        db.session.add(updated_customer)
-        db.session.commit()
-        return updated_customer
-    else:
-        raise ValueError(f'Customer with ID {customer_id} not found')
+    db.session.add(customer)
+    db.session.commit()
+    return customer
 
 
 def delete_customer(customer_id):
