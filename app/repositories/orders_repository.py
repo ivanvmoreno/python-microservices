@@ -15,18 +15,15 @@ def get_order(order_id):
 
 def add_order(order):
     # TODO: generate order ID
+    db.session.add(order)
+    db.session.commit()
+    return order
 
-    existing_order = Order.query \
-        .filter(Order.order_id == order_id) \
-        .one_or_none()
 
-    if existing_order is None:
-        new_order = OrderSchema().load(order).data
-        db.session.add(new_order)
-        db.session.commit()
-        return new_order
-    else:
-        raise ValueError(f'An order with ID {order_id} already exists')
+def update_order(order):
+    db.session.add(order)
+    db.session.commit()
+    return order
 
 
 def add_product_to_order(order_id, body):
@@ -54,20 +51,6 @@ def add_product_to_order(order_id, body):
         return 201
     else:
         abort(404, f'Order with ID {order_id} not found')
-
-
-def update_order(order_id, order_data):
-    existing_order = Order.query \
-        .filter(Order.order_id == order_id) \
-        .one_or_none()
-
-    if existing_order is not None:
-        updated_order = OrderSchema().load(order_data, instance=existing_order, partial=True).data
-        db.session.add(updated_order)
-        db.session.commit()
-        return updated_order
-    else:
-        raise ValueError(f'Order with ID {order_id} not found')
 
 
 def update_order_product(order_id, body):

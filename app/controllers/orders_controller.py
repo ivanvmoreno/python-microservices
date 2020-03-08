@@ -20,24 +20,23 @@ def add_order(order):
     :return:        order on success, 409 on already exists
     """
     try:
-        new_order = orders_repository.add_order(order)
+        new_order = orders_repository.add_order(OrderSchema.load(order, partial=True).data)
         return OrderSchema().dump(new_order).data, 200
     except ValueError as error:
-        return f'An order with ID {order_id} already exists', 409
+        return f'Error when storing order', 500
 
 def cancel_order(order_id):
     """
     Request order cancellation
     :param order_id:    order ID
-    :return:            200 on cancelled, 
-                        404 on non-existing order, 
+    :return:            200 on cancelled,
                         409 on order not cancellable
     """
     try:
         existing_order = orders_repository.get_order(order_id)
-        if existing_order is None: return f'Order with ID {order_id} not found', 404
         if existing_order.status == OrderStatus.shipped: raise ValueError(f'Order with ID {order_id} is already shipped')
-        orders_repository.update_order(order_id, { status: OrderStatus.cancelled })
+        existing_order.status = OrderStatus.cancelled
+        orders_repository.update_order(existing_order)
         return f'Order with ID {order_id} cancelled', 200
     except ValueError as error:
         return f'Order with ID {order_id} cannot be cancelled', 409
