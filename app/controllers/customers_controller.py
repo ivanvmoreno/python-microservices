@@ -1,3 +1,4 @@
+from ..config import amqp_ch
 from ..repositories import customers_repository
 from ..models.customers_db.Customer import CustomerSchema
 
@@ -17,24 +18,25 @@ def add_customer(customer):
     """
     Creates a new customer based on the received data
     :param customer:    customer data for creation
-    :return:            customer on success, 409 on already exists
+    :return:            customer on success, 500 on error
     """
     try:
-        new_customer = customers_repository.add_customer(customer)
+        new_customer = customers_repository.add_customer(CustomerSchema().load(customer).data)
         return CustomerSchema().dump(new_customer).data, 201
     except ValueError as error:
-        return f'A customer with ID {customer_id} already exists', 409
+        return f'Error while storing customer', 500
     
 
-def update_customer(customer_id, customer_data):
+def update_customer(customer):
     """
     Creates a new customer based on the received data
-    :param customer_id:     ID of customer to update
     :param customer_data:   new customer data
     :return:                updated customer on success, 404 on not found
     """
     try:
-        updated_customer = customers_repository.update_customer(customer_id, customer_data)
+        # TODO: update openAPI endpoint definition 
+        updated_customer = customers_repository.update_customer(CustomerSchema().load(customer).data)
         return CustomerSchema().dump(updated_customer).data, 201
     except ValueError as error:
         return f'Customer with ID {customer_id} not found', 404
+
