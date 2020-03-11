@@ -1,3 +1,4 @@
+from uuid import uuid4
 from ..config import db
 from ..models.products_db.Product import Product, ProductSchema
 
@@ -13,7 +14,7 @@ def get_product(product_id):
 
 
 def add_product(product):
-    # TODO: generate product ID
+    product.product_id = uuid4()
     db.session.add(product)
     db.session.commit()
     return product

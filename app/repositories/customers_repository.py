@@ -1,3 +1,4 @@
+from uuid import uuid4
 from ..config import db
 from ..models.customers_db.Customer import Customer, CustomerSchema
 
@@ -13,7 +14,7 @@ def get_customer(customer_id):
 
 
 def add_customer(customer):
-    # TODO: generate customer ID
+    customer.customer_id = uuid4()
     db.session.add(customer)
     db.session.commit()
     return customer
