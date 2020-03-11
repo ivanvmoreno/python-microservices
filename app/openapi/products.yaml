@@ -27,6 +27,24 @@ paths:
                   - $ref: '#/components/schemas/ProductRequiredProperties'
         409:
           description: A product with ID {product_id} already exists
+    put:
+      operationId: products_controller.update_product
+      tags:
+        - Products
+      summary: Updates an existing product based on the received data
+      parameters:
+        - $ref: '#/components/parameters/product_id'
+      responses:
+        204:
+          description: Returns updated product
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ProductProperties'
+                  - $ref: '#/components/schemas/ProductRequiredProperties'
+        404:
+          description: Product with ID {product_id} not found
   /{product_id}:
     get:
       operationId: products_controller.get_product
@@ -45,24 +63,6 @@ paths:
                   - $ref: '#/components/schemas/ProductProperties'
                   - $ref: '#/components/schemas/ProductRequiredProperties'
         404: 
-          description: Product with ID {product_id} not found
-    put:
-      operationId: products_controller.update_product
-      tags:
-        - Products
-      summary: Updates an existing product based on the received data
-      parameters:
-        - $ref: '#/components/parameters/product_id'
-      responses:
-        204:
-          description: Returns updated product
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/ProductProperties'
-                  - $ref: '#/components/schemas/ProductRequiredProperties'
-        404:
           description: Product with ID {product_id} not found
     delete:
       operationId: products_controller.delete_product

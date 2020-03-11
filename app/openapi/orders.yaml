@@ -46,42 +46,25 @@ paths:
                   - $ref: '#/components/schemas/OrderRequiredProperties'
         404: 
           description: Order with ID {order_id} not found
+  /{order_id}/cancel:
     put:
-      operationId: orders_controller.update_order
+      operationId: orders_controller.cancel_order
       tags:
         - Orders
       summary: Updates an existing order based on the received data
       parameters:
         - $ref: '#/components/parameters/order_id'
       responses:
-        204:
-          description: Returns updated order
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/OrderProperties'
-                  - $ref: '#/components/schemas/OrderRequiredProperties'
-        404:
-          description: Order with ID {order_id} not found
-    delete:
-      operationId: orders_controller.delete_order
-      tags:
-        - Orders
-      summary: Deletes a order
-      parameters:
-        - $ref: '#/components/parameters/order_id'
-      responses:
-        202:
-          description: Order deleted successfully
-        404:
-          description: Order with ID {order_id} not found
+        200:
+          description: Succesfully cancelled order
+        409:
+          description: Order not cancellable
   /{order_id}/products/:
     post:
       operationId: orders_controller.add_product_to_order
       tags:
         - Orders
-        - products
+        - Products
       summary: Adds an existing product to an order
       parameters:
         - $ref: '#/components/parameters/order_id'
@@ -97,10 +80,10 @@ paths:
         404:
           description: Order with ID {order_id} not found
     put:
-      operationId: orders_controller.update_order_product
+      operationId: orders_controller.update_product_quantity
       tags: 
         - Orders
-        - products
+        - Products
       summary: Updates an order product quantity
       parameters:
         - $ref: '#/components/parameters/order_id'
@@ -120,7 +103,7 @@ paths:
       operationId: orders_controller.delete_product_from_order
       tags: 
         - Orders
-        - products
+        - Products
       summary: Updates an order product quantity
       parameters:
         - $ref: '#/components/parameters/order_id'

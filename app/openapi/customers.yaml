@@ -27,6 +27,24 @@ paths:
                   - $ref: '#/components/schemas/CustomerRequiredProperties'
         409:
           description: A customer with ID {customer_id} already exists
+    put:
+      operationId: customers_controller.update_customer
+      tags:
+        - Customers
+      summary: Updates an existing customer based on the received data
+      parameters:
+        - $ref: '#/components/parameters/customer_id'
+      responses:
+        204:
+          description: Returns updated customer
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/CustomerProperties'
+                  - $ref: '#/components/schemas/CustomerRequiredProperties'
+        404:
+          description: Customer with ID {customer_id} not found
   /{customer_id}:
     get:
       operationId: customers_controller.get_customer
@@ -45,24 +63,6 @@ paths:
                   - $ref: '#/components/schemas/CustomerProperties'
                   - $ref: '#/components/schemas/CustomerRequiredProperties'
         404: 
-          description: Customer with ID {customer_id} not found
-    put:
-      operationId: customers_controller.update_customer
-      tags:
-        - Customers
-      summary: Updates an existing customer based on the received data
-      parameters:
-        - $ref: '#/components/parameters/customer_id'
-      responses:
-        204:
-          description: Returns updated customer
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/CustomerProperties'
-                  - $ref: '#/components/schemas/CustomerRequiredProperties'
-        404:
           description: Customer with ID {customer_id} not found
     delete:
       operationId: customers_controller.delete_customer
