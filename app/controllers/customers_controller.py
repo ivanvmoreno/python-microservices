@@ -29,14 +29,27 @@ def add_customer(customer):
 
 def update_customer(customer):
     """
-    Creates a new customer based on the received data
+    Updates existing customer with the received data
     :param customer_data:   new customer data
     :return:                updated customer on success, 404 on not found
     """
     try:
-        # TODO: update openAPI endpoint definition 
         updated_customer = customers_repository.update_customer(CustomerSchema().load(customer, partial=True).data)
         return CustomerSchema().dump(updated_customer).data, 201
+    except ValueError as error:
+        return f'Customer with ID {customer_id} not found', 404
+
+
+def delete_customer(customer_id):
+    """
+    Deletes existing customer
+    :param customer_id:     ID of the customer to delete
+    :return:                202 on success, 
+                            404 on customer not found
+    """
+    try:
+        customers_repository.delete_customer(customer_id)
+        return 202
     except ValueError as error:
         return f'Customer with ID {customer_id} not found', 404
 

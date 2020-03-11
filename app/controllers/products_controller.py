@@ -34,7 +34,6 @@ def update_product(product):
     :return:        updated product on success, 404 on not found
     """
     try:
-        # TODO: update openAPI endpoint definition
         updated_product = products_repository.update_product(ProductSchema().load(product, partial=True).data)
         return ProductSchema().dump(updated_product).data, 200
     except ValueError as error:
