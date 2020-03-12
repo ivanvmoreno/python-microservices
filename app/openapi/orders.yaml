@@ -24,7 +24,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/OrderProperties'
-                  - $ref: '#/components/schemas/OrderRequiredProperties'
+                  - $ref: '#/components/schemas/OrderProperties/required'
         409:
           description: A order with ID {order_id} already exists
   /{order_id}:
@@ -43,7 +43,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/OrderProperties'
-                  - $ref: '#/components/schemas/OrderRequiredProperties'
+                  - $ref: '#/components/schemas/OrderProperties/required'
         404: 
           description: Order with ID {order_id} not found
   /{order_id}/cancel:
@@ -118,12 +118,14 @@ components:
   parameters:
     order_id:
       name: order_id
+      description: Order ID
       in: path
       required: true
       schema:
         $ref: '#/components/schemas/id'
     product_id:
       name: product_id
+      description: Product ID
       in: path
       required: true
       schema:
@@ -136,7 +138,7 @@ components:
           schema:
             allOf:
               - $ref: '#/components/schemas/OrderProperties'
-              - $ref: '#/components/schemas/OrderRequiredProperties'
+              - $ref: '#/components/schemas/OrderProperties/required'
   schemas:
     OrderProperties:
       type: object
@@ -159,8 +161,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OrderProduct'
-    OrderRequiredProperties:
-      type: object
       required:
         - order_id
         - customer_id
