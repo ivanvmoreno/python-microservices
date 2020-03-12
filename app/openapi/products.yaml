@@ -24,7 +24,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/ProductProperties'
-                  - $ref: '#/components/schemas/ProductRequiredProperties'
+                  - $ref: '#/components/schemas/ProductProperties/required'
         409:
           description: A product with ID {product_id} already exists
     put:
@@ -32,17 +32,15 @@ paths:
       tags:
         - Products
       summary: Updates an existing product based on the received data
-      parameters:
-        - $ref: '#/components/parameters/product_id'
       responses:
-        204:
+        202:
           description: Returns updated product
           content:
             application/json:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/ProductProperties'
-                  - $ref: '#/components/schemas/ProductRequiredProperties'
+                  - $ref: '#/components/schemas/ProductProperties/required'
         404:
           description: Product with ID {product_id} not found
   /{product_id}:
@@ -61,7 +59,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/ProductProperties'
-                  - $ref: '#/components/schemas/ProductRequiredProperties'
+                  - $ref: '#/components/schemas/ProductProperties/required'
         404: 
           description: Product with ID {product_id} not found
     delete:
@@ -81,6 +79,7 @@ components:
   parameters:
     product_id:
       name: product_id
+      description: Product ID
       in: path
       required: true
       schema:
@@ -93,7 +92,7 @@ components:
           schema:
             allOf:
               - $ref: '#/components/schemas/ProductProperties'
-              - $ref: '#/components/schemas/ProductRequiredProperties'
+              - $ref: '#/components/schemas/ProductProperties/required'
   schemas:
     ProductProperties:
       type: object
@@ -113,8 +112,6 @@ components:
         reserved_items:
           type: integer
           format: int32
-    ProductRequiredProperties:
-      type: object
       required:
         - product_id
         - name
