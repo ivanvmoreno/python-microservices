@@ -1,5 +1,5 @@
 from uuid import uuid4
-from ..config import db
+from ..config_base import db
 from ..models.products_db.Product import Product, ProductSchema
 
 def get_product(product_id):

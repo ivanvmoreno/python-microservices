@@ -1,4 +1,4 @@
-from ..config import app, amqp_ch
+from ..config_base import app, amqp_ch
 from connexion.resolver import RestyResolver
 from ..config.constants import AMQP_QUEUES, TCP_PORT
 

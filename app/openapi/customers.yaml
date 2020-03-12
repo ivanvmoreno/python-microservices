@@ -11,9 +11,9 @@ servers:
 paths:
   /:
     post:
-      operationId: customers_controller.add_customer
       tags:
         - Customers
+      summary: Creates a new customer
       requestBody:
         $ref: '#/components/requestBodies/CreateCustomer'
       responses:
@@ -24,28 +24,19 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/CustomerProperties'
-                  - $ref: '#/components/schemas/CustomerProperties/required'
         409:
           description: A customer with ID {customer_id} already exists
     put:
-      operationId: customers_controller.update_customer
       tags:
         - Customers
       summary: Updates an existing customer based on the received data
       responses:
-        202:
+        200:
           description: Returns updated customer
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/CustomerProperties'
-                  - $ref: '#/components/schemas/CustomerProperties/required'
         404:
           description: Customer with ID {customer_id} not found
   /{customer_id}:
     get:
-      operationId: customers_controller.get_customer
       tags:
         - Customers
       summary: Fetches a customer
@@ -59,18 +50,16 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/CustomerProperties'
-                  - $ref: '#/components/schemas/CustomerProperties/required'
         404: 
           description: Customer with ID {customer_id} not found
     delete:
-      operationId: customers_controller.delete_customer
       tags:
         - Customers
       summary: Deletes a customer
       parameters:
         - $ref: '#/components/parameters/customer_id'
       responses:
-        202:
+        204:
           description: Customer deleted successfully
         404:
           description: Customer with ID {customer_id} not found
@@ -92,25 +81,31 @@ components:
           schema:
             allOf:
               - $ref: '#/components/schemas/CustomerProperties'
-              - $ref: '#/components/schemas/CustomerProperties/required'
   schemas:
     CustomerProperties:
       type: object
+      description: Customer entity properties
       properties:
         customer_id:
           $ref: '#/components/schemas/id'
         name:
+          description: Customer name
           type: string
         email:
+          description: Customer email
           type: string
         phone:
+          description: Customer phone
           type: integer
           format: int32
         billing_address:
+          description: Customer billing address
           type: string
         shipping_address:
+          description: Customer shipping address
           type: string
         credit_standing:
+          description: Current credit balance of the customer
           type: number
           format: float
       required:
@@ -121,4 +116,5 @@ components:
         - credit_standing
     id:
       type: integer
+      description: Reusable ID schema
       format: int32

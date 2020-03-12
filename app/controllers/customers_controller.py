@@ -1,8 +1,8 @@
-from ..config import amqp_ch
+from ..config_base import amqp_ch
 from ..repositories import customers_repository
 from ..models.customers_db.Customer import CustomerSchema
 
-def get_customer(customer_id):
+def get(customer_id):
     """
     Returns the matching customer
     :param person_id:   customer ID
@@ -14,7 +14,7 @@ def get_customer(customer_id):
     except ValueError as error:
         return f'Customer with ID {customer_id} not found', 404
 
-def add_customer(customer):
+def post(customer):
     """
     Creates a new customer based on the received data
     :param customer:    customer data for creation
@@ -27,7 +27,7 @@ def add_customer(customer):
         return f'Error when storing customer', 500
     
 
-def update_customer(customer):
+def put(customer):
     """
     Updates existing customer with the received data
     :param customer_data:   new customer data
@@ -35,12 +35,12 @@ def update_customer(customer):
     """
     try:
         updated_customer = customers_repository.update_customer(CustomerSchema().load(customer, partial=True).data)
-        return CustomerSchema().dump(updated_customer).data, 201
+        return CustomerSchema().dump(updated_customer).data, 202
     except ValueError as error:
         return f'Customer with ID {customer_id} not found', 404
 
 
-def delete_customer(customer_id):
+def delete(customer_id):
     """
     Deletes existing customer
     :param customer_id:     ID of the customer to delete
@@ -49,7 +49,7 @@ def delete_customer(customer_id):
     """
     try:
         customers_repository.delete_customer(customer_id)
-        return 202
+        return 204
     except ValueError as error:
         return f'Customer with ID {customer_id} not found', 404
 

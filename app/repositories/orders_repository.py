@@ -1,5 +1,5 @@
 from uuid import uuid4
-from ..config import db
+from ..config_base import db
 from ..models.orders_db.Order import Order, OrderSchema
 from ..models.orders_db.OrderProduct import OrderProduct
 

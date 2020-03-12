@@ -1,5 +1,5 @@
 from uuid import uuid4
-from ..config import db
+from ..config_base import db
 from ..models.customers_db.Customer import Customer, CustomerSchema
 
 def get_customer(customer_id):
