@@ -24,7 +24,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/CustomerProperties'
-                  - $ref: '#/components/schemas/CustomerRequiredProperties'
+                  - $ref: '#/components/schemas/CustomerProperties/required'
         409:
           description: A customer with ID {customer_id} already exists
     put:
@@ -32,17 +32,15 @@ paths:
       tags:
         - Customers
       summary: Updates an existing customer based on the received data
-      parameters:
-        - $ref: '#/components/parameters/customer_id'
       responses:
-        204:
+        202:
           description: Returns updated customer
           content:
             application/json:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/CustomerProperties'
-                  - $ref: '#/components/schemas/CustomerRequiredProperties'
+                  - $ref: '#/components/schemas/CustomerProperties/required'
         404:
           description: Customer with ID {customer_id} not found
   /{customer_id}:
@@ -61,7 +59,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/CustomerProperties'
-                  - $ref: '#/components/schemas/CustomerRequiredProperties'
+                  - $ref: '#/components/schemas/CustomerProperties/required'
         404: 
           description: Customer with ID {customer_id} not found
     delete:
@@ -81,6 +79,7 @@ components:
   parameters:
     customer_id:
       name: customer_id
+      description: Customer ID
       in: path
       required: true
       schema:
@@ -93,7 +92,7 @@ components:
           schema:
             allOf:
               - $ref: '#/components/schemas/CustomerProperties'
-              - $ref: '#/components/schemas/CustomerRequiredProperties'
+              - $ref: '#/components/schemas/CustomerProperties/required'
   schemas:
     CustomerProperties:
       type: object
@@ -114,8 +113,6 @@ components:
         credit_standing:
           type: number
           format: float
-    CustomerRequiredProperties:
-      type: object
       required:
         - customer_id
         - name
