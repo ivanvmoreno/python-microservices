@@ -1,4 +1,3 @@
-from uuid import uuid4
 from ..config_base import db
 from ..models.orders_db.Order import Order, OrderSchema
 from ..models.orders_db.OrderProduct import OrderProduct
@@ -11,7 +10,7 @@ def get_order(order_id):
     if product is not None:
         return product
     else:
-        raise ValueError(f'Product with ID {product_id} not found')
+        raise ValueError(f'Product {product_id} not found')
 
 
 def delete_order(order_id):
@@ -24,11 +23,10 @@ def delete_order(order_id):
         db.session.commit()
         return
     else:
-        raise ValueError(f'Order with ID {order_id} not found')
+        raise ValueError(f'Order {order_id} not found')
 
 
 def add_order(order):
-    order.order_id = uuid4()
     db.session.add(order)
     db.session.commit()
     return order
@@ -62,5 +60,5 @@ def delete_product_from_order(order_id, product_id):
         db.session.commit()
         return order_product
     else:
-        raise ValueError(f'Product with ID {product_id} not found in order {order_id}')
+        raise ValueError(f'Product {product_id} not found in order {order_id}')
 
