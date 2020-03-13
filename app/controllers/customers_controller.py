@@ -2,54 +2,33 @@ from ..config_base import amqp_ch
 from ..repositories import customers_repository
 from ..models.customers_db.Customer import CustomerSchema
 
-def get(customer_id):
-    """
-    Returns the matching customer
-    :param person_id:   customer ID
-    :return:            customer on success, 404 on not found
-    """
+def get(email):
     try:
-        customer = customers_repository.get_customer(customer_id)
-        return CustomerSchema().dump(customer).data, 200
+        customer = customers_repository.get_customer(email)
+        return CustomerSchema().dump(customer), 200
     except ValueError as error:
-        return f'Customer with ID {customer_id} not found', 404
+        return f'Customer {email} not found', 404
 
-def post(customer):
-    """
-    Creates a new customer based on the received data
-    :param customer:    customer data for creation
-    :return:            customer on success, 500 on error
-    """
+def post(body):
     try:
-        new_customer = customers_repository.add_customer(CustomerSchema().load(customer, partial=True).data)
-        return CustomerSchema().dump(new_customer).data, 201
+        new_customer = customers_repository.add_customer(CustomerSchema().load(body, partial=True))
+        return CustomerSchema().dump(new_customer), 201
     except ValueError as error:
-        return f'Error when storing customer', 500
+        return f'Error creating customer', 500
     
 
-def put(customer):
-    """
-    Updates existing customer with the received data
-    :param customer_data:   new customer data
-    :return:                updated customer on success, 404 on not found
-    """
+def put(body):
     try:
-        updated_customer = customers_repository.update_customer(CustomerSchema().load(customer, partial=True).data)
-        return CustomerSchema().dump(updated_customer).data, 202
+        updated_customer = customers_repository.update_customer(CustomerSchema().load(body, partial=True))
+        return CustomerSchema().dump(updated_customer), 200
     except ValueError as error:
-        return f'Customer with ID {customer_id} not found', 404
+        return f'Customer not found', 404
 
 
-def delete(customer_id):
-    """
-    Deletes existing customer
-    :param customer_id:     ID of the customer to delete
-    :return:                202 on success, 
-                            404 on customer not found
-    """
+def delete(email):
     try:
-        customers_repository.delete_customer(customer_id)
+        customers_repository.delete_customer(email)
         return 204
     except ValueError as error:
-        return f'Customer with ID {customer_id} not found', 404
+        return f'Customer {email} not found', 404
 

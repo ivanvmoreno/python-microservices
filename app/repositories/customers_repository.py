@@ -1,20 +1,18 @@
-from uuid import uuid4
 from ..config_base import db
 from ..models.customers_db.Customer import Customer, CustomerSchema
 
-def get_customer(customer_id):
+def get_customer(email):
     customer = Customer.query \
-        .filter(Customer.customer_id == customer_id) \
+        .filter(Customer.email == email) \
         .one_or_none()
 
     if customer is not None:
         return customer
     else:
-        raise ValueError(f'Customer with ID {customer_id} not found')
+        raise ValueError(f'Customer with {email} not found')
 
 
 def add_customer(customer):
-    customer.customer_id = uuid4()
     db.session.add(customer)
     db.session.commit()
     return customer
@@ -26,9 +24,9 @@ def update_customer(customer):
     return customer
 
 
-def delete_customer(customer_id):
+def delete_customer(email):
     customer = Customer.query \
-        .filter(Customer.customer_id == customer_id) \
+        .filter(Customer.email == email) \
         .one_or_none()
 
     if customer is not None:
@@ -36,5 +34,5 @@ def delete_customer(customer_id):
         db.session.commit()
         return
     else:
-        raise ValueError(f'Customer with ID {customer_id} not found')
+        raise ValueError(f'Customer {email} not found')
 

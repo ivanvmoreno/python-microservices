@@ -24,8 +24,8 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/CustomerProperties'
-        409:
-          description: A customer with ID {customer_id} already exists
+        500:
+          description: Error creating customer
     put:
       tags:
         - Customers
@@ -33,15 +33,20 @@ paths:
       responses:
         200:
           description: Returns updated customer
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/CustomerProperties'
         404:
-          description: Customer with ID {customer_id} not found
-  /{customer_id}:
+          description: Customer not found
+  /{email}:
+    parameters:
+      - $ref: '#/components/parameters/email'
     get:
       tags:
         - Customers
       summary: Fetches a customer
-      parameters:
-        - $ref: '#/components/parameters/customer_id'
       responses:
         200:
           description: Returns existing customer
@@ -51,43 +56,68 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/CustomerProperties'
         404: 
-          description: Customer with ID {customer_id} not found
+          description: Customer {email} not found
     delete:
       tags:
         - Customers
       summary: Deletes a customer
-      parameters:
-        - $ref: '#/components/parameters/customer_id'
       responses:
         204:
           description: Customer deleted successfully
         404:
-          description: Customer with ID {customer_id} not found
+          description: Customer {email} not found
    
 components:
   parameters:
-    customer_id:
-      name: customer_id
-      description: Customer ID
+    email:
+      name: email
+      description: Customer email
       in: path
       required: true
       schema:
-        $ref: '#/components/schemas/id'
+        $ref: '#/components/schemas/CustomerProperties/properties/email'
   requestBodies:
     CreateCustomer:
       description: Create a new customer
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '#/components/schemas/CustomerProperties'
+            type: object
+            properties:
+              name:
+                description: Customer name
+                type: string
+              email:
+                description: Customer email
+                type: string
+              phone:
+                description: Customer phone
+                type: integer
+                format: int32
+              billing_address:
+                description: Customer billing address
+                type: string
+              shipping_address:
+                description: Customer shipping address
+                type: string
+              credit_standing:
+                description: Current credit balance of the customer
+                type: number
+                format: float
+            required:
+              - name
+              - email
+              - billing_address
+              - shipping_address
   schemas:
     CustomerProperties:
       type: object
       description: Customer entity properties
       properties:
         customer_id:
-          $ref: '#/components/schemas/id'
+          description: Customer ID
+          type: integer
+          format: int32
         name:
           description: Customer name
           type: string
@@ -109,12 +139,7 @@ components:
           type: number
           format: float
       required:
-        - customer_id
         - name
+        - email
         - billing_address
         - shipping_address
-        - credit_standing
-    id:
-      type: integer
-      description: Reusable ID schema
-      format: int32
