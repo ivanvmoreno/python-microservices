@@ -1,54 +1,34 @@
 from ..repositories import products_repository
 from ..models.products_db.Product import ProductSchema
 
-def get_product(product_id):
-    """
-    Returns the matching product
-    :param product_id:   product ID
-    :return:            product on success, 404 on not found
-    """
+def get(product_id):
     try:
         product = products_repository.get_product(product_id)
-        return ProductSchema().dump(product).data, 200
+        return ProductSchema().dump(product), 200
     except ValueError as error:
         return f'Product with ID {product_id} not found', 404
 
 
-def add_product(product):
-    """
-    Creates a new product based on the received data
-    :param product:   product data for creation
-    :return:          product on success, 500 on error
-    """
+def post(body):
     try:
-        new_product = products_repository.add_product(ProductSchema().load(product, partial=True).data)
-        return ProductSchema().dump(new_product).data, 200
+        new_product = products_repository.add_product(ProductSchema().load(body, partial=True))
+        return ProductSchema().dump(new_product), 200
     except ValueError as error:
-        return f'Error while adding product {product_id}', 500
+        return f'Error creating product', 500
 
 
-def update_product(product):
-    """
-    Creates a new product based on the received data
-    :param product: new product data
-    :return:        updated product on success, 404 on not found
-    """
+def put(body):
     try:
-        updated_product = products_repository.update_product(ProductSchema().load(product, partial=True).data)
-        return ProductSchema().dump(updated_product).data, 200
+        updated_product = products_repository.update_product(ProductSchema().load(body, partial=True))
+        return ProductSchema().dump(updated_product), 202
     except ValueError as error:
-        return f'Product with ID {product_id} not found', 404
+        return f'Product not found', 404
 
 
-def delete_product(product_id):
-    """
-    Deletes the matching product
-    :param product_id:   product to update
-    :return:             200 on deletion, 404 on not found
-    """
+def delete(product_id):
     try:
         products_repository.delete_product(product_id)
-        return f'Product with ID {order_id} deleted', 200
+        return f'Product with ID {product_id} deleted', 204
     except ValueError as error:
-        return f'Product with ID {order_id} not found', 400
+        return f'Product not found', 400
 

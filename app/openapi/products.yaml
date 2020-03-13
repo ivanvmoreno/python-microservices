@@ -11,7 +11,7 @@ servers:
 paths:
   /:
     post:
-      operationId: products_controller.add_product
+      summary: Creates a new product
       tags:
         - Products
       requestBody:
@@ -22,13 +22,10 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ProductProperties'
-                  - $ref: '#/components/schemas/ProductProperties/required'
-        409:
-          description: A product with ID {product_id} already exists
+                $ref: '#/components/schemas/ProductProperties'
+        500:
+          description: Error creating product
     put:
-      operationId: products_controller.update_product
       tags:
         - Products
       summary: Updates an existing product based on the received data
@@ -38,42 +35,34 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ProductProperties'
-                  - $ref: '#/components/schemas/ProductProperties/required'
+                $ref: '#/components/schemas/ProductProperties'
         404:
-          description: Product with ID {product_id} not found
+          description: Product not found
   /{product_id}:
+    parameters:
+      - $ref: '#/components/parameters/product_id'
     get:
-      operationId: products_controller.get_product
       tags:
         - Products
       summary: Fetches a product
-      parameters:
-        - $ref: '#/components/parameters/product_id'
       responses:
         200:
           description: Returns existing product
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/ProductProperties'
-                  - $ref: '#/components/schemas/ProductProperties/required'
+                $ref: '#/components/schemas/ProductProperties'
         404: 
-          description: Product with ID {product_id} not found
+          description: Product not found
     delete:
-      operationId: products_controller.delete_product
       tags:
         - Products
       summary: Deletes a product
-      parameters:
-        - $ref: '#/components/parameters/product_id'
       responses:
-        202:
+        204:
           description: Product deleted successfully
         404:
-          description: Product with ID {product_id} not found
+          description: Product not found
   
 components:
   parameters:
@@ -90,26 +79,30 @@ components:
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '#/components/schemas/ProductProperties'
-              - $ref: '#/components/schemas/ProductProperties/required'
+            $ref: '#/components/schemas/ProductProperties'
   schemas:
     ProductProperties:
+      description: Product entity properties
       type: object
       properties:
         product_id:
           $ref: '#/components/schemas/id'
         name:
+          description: Product name
           type: string
         price:
+          description: Product price
           type: number
           format: float
         category:
+          description: Product category
           type: string
         stock_items:
+          description: Product available stock
           type: integer
           format: int32
         reserved_items:
+          description: Product reserved stock (orders in process of being accepted)
           type: integer
           format: int32
       required:
@@ -117,5 +110,6 @@ components:
         - name
         - price
     id:
+      description: Reusable ID property schema
       type: integer
       format: int32
