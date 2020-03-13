@@ -22,8 +22,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/CustomerProperties'
+                $ref: '#/components/schemas/CustomerProperties'
         500:
           description: Error creating customer
     put:
@@ -36,8 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/CustomerProperties'
+                $ref: '#/components/schemas/CustomerProperties'
         404:
           description: Customer not found
   /{email}:
@@ -53,10 +51,9 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: '#/components/schemas/CustomerProperties'
+                $ref: '#/components/schemas/CustomerProperties'
         404: 
-          description: Customer {email} not found
+          description: Customer not found
     delete:
       tags:
         - Customers
@@ -65,7 +62,7 @@ paths:
         204:
           description: Customer deleted successfully
         404:
-          description: Customer {email} not found
+          description: Customer not found
    
 components:
   parameters:
