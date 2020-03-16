@@ -1,31 +1,37 @@
-import aiormq, typing
+import aiormq, asyncio
+from typing import *
 
-class AMQPConnection:
+class AMQPHelper:
     _connected = False
+    _connections: Dict[str, Dict]= {}
+    # _exchanges holds the reference of a exchange to its parent channel
+    _exchanges: Dict[str, Callable] = {}
 
-    def __init__(self, amqp_uri, events_bindings: typing.Dict[str, typing.Callable], exchage_name = ''):
-        self.amqp_uri = amqp_uri
-        self.events_bindings = events_bindings
-        self.exchange_name = exchage_name
+    async def connect(self, amqp_uri, events_bindings: Dict[str, Callable], exchange_name = ''):
+        try:
+            if not exchange_name in self._exchanges:
+                if not amqp_uri in self._connections:
+                    self._connections[amqp_uri] = { '_conn': await aiormq.connect(amqp_uri) }
+                    self._connections[amqp_uri]['_ch'] = await self._connections[amqp_uri]['_conn'].channel()
+                channel = self._connections[amqp_uri]['_ch']
+                # Declare direct exchange
+                await channel.exchange_declare(exchange=exchange_name, durable=True)
+                for event_name, callback in events_bindings.items():
+                    declared_queue = await channel.queue_declare(durable=True)
+                    await channel.queue_bind(declared_queue.queue, exchange_name, routing_key=event_name)
+                    # Start consumption of queue messages
+                    await channel.basic_consume(declared_queue.queue, callback)
+                self._exchanges[exchange_name] = channel
+            else:
+                raise ValueError('Already connected to server / exchange combination')
+        except:
+            print('Unexpected error when trying to connect')
 
-    async def connect(self):
-        if not self._connected:
-            self._connection = await aiormq.connect(self.amqp_uri)
-            self._channel = await self._connection.channel()
-            # Declare a direct exchange
-            await self._channel.exchange_declare(exchange=self.exchange_name, durable=True)
-            for event_name, callback in self.events_bindings.items():
-                declared_queue = await self._channel.queue_declare(durable=True)
-                await self._channel.queue_bind(declared_queue.queue, self.exchange_name, routing_key=event_name)
-                # Start consumption of queue messages
-                await self._channel.basic_consume(declared_queue.queue, callback)
-            self._connected = True
+    async def publish(self, exchange_name, event_name, body):
+        if self._exchanges[exchange_name]:
+            await self._exchanges[exchange_name].basic_publish(body, exchange=self.exchange_name, routing_key=event_name)
         else:
-            raise ValueError('Instance already connected to server')
+            raise ValueError('Channel not open for specified exchange. Check if existing connection to its server')
 
-    async def publish(self, event_name, body):
-        if self._connected:
-            await self._channel.basic_publish(body, exchange=self.exchange_name, routing_key=event_name)
-        else:
-            raise ValueError('Channel not open. Check instance connection')
-
+    def publish_sync(self, exchange_name, event_name, body):
+        asyncio.run(self.publish(event_name, body))
