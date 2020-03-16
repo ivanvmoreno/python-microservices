@@ -2,7 +2,6 @@ import aiormq, asyncio
 from typing import *
 
 class AMQPHelper:
-    _connected = False
     _connections: Dict[str, Dict]= {}
     # _exchanges holds the reference of a exchange to its parent channel
     _exchanges: Dict[str, Callable] = {}
