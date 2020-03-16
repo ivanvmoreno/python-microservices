@@ -1,6 +1,10 @@
-from ..config_base import amqp_ch
 from ..repositories import customers_repository
 from ..models.customers_db.Customer import CustomerSchema
+
+async def order_created_cb(message):
+    print(" [x] %r:%r" % (message.delivery.routing_key, message.body))
+    await message.channel.basic_ack(message.delivery.delivery_tag)
+
 
 def get(email):
     try:
@@ -8,6 +12,7 @@ def get(email):
         return CustomerSchema().dump(customer), 200
     except ValueError as error:
         return f'Customer {email} not found', 404
+
 
 def post(body):
     try:

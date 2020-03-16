@@ -10,9 +10,9 @@ flask-sqlalchemy = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 marshmallow = "*"
-pika = "*"
 connexion = {extras = ["swagger-ui"],version = "*"}
 pymysql = "*"
+aiormq = "*"
 
 [requires]
 python_version = "3.8"

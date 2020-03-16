@@ -121,7 +121,10 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/OrderProperties'
+            allOf:
+              - $ref: '#/components/schemas/OrderProperties'
+              - required:
+                  - products
     CreateOrderProduct:
       description: OrderProduct details
       content:

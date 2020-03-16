@@ -1,5 +1,5 @@
 ## AMQP events
-In this proof of concept, all queues are declared in the default AMQP exchange.
+In this proof of concept, all queues are declared in the default AMQP exchange. The default AMQP exchange is a direct exchange in which messages are delivered to the queue with a name equal to the routing key of the message. Each queue is automatically bound to the default exchange with a routing key equal to the queue name.
 | producers (services) | queue / routing key | listeners (services) | description |
 | -------- | ----- | --------- | ------------ |
 | `orders` | `order-created` | `customers` | Dispatched after `Order` is created (status `pending`) |
