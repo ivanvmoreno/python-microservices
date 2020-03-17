@@ -1,3 +1,4 @@
+from .constants import AMQP_URI
 from ..controllers import customers_controller
 # from ..controllers import customers_controller, orders_controller, products_controller
 
@@ -15,8 +16,10 @@ class ORDER_EVENTS:
     CHECK_ORDER_PRODUCTS_STOCK = 'check-order-products-stock'
 
 # Events services have to listen to and their associated callbacks
-QUEUES_CUSTOMERS = {
-    ORDER_EVENTS.ORDER_CREATED: customers_controller.order_created_cb
+AMQP_CUSTOMERS = {
+    AMQP_URI: {
+        AMQP_EXCHANGE: {ORDER_EVENTS.ORDER_CREATED: customers_controller.order_created_cb}
+    }
 }
 # QUEUES_ORDERS = {
 #     ORDER_EVENTS.CANCEL_ORDER: orders_controller.cancel_order_cb,
