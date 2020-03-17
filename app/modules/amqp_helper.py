@@ -1,15 +1,17 @@
-import aiormq, asyncio
+import aiormq
+import asyncio
 from typing import *
+
 
 class AMQPHelper:
     _connections: Dict[str, Dict]= {}
     # _exchanges holds the reference of a exchange to its parent channel
     _exchanges: Dict[str, Callable] = {}
 
-    async def connect(self, amqp_uri, events_bindings: Dict[str, Callable], exchange_name = ''):
+    async def connect(self, amqp_uri, events_bindings: Dict[str, Callable], exchange_name=''):
         try:
-            if not exchange_name in self._exchanges:
-                if not amqp_uri in self._connections:
+            if exchange_name not in self._exchanges:
+                if amqp_uri not in self._connections:
                     self._connections[amqp_uri] = { '_conn': await aiormq.connect(amqp_uri) }
                     self._connections[amqp_uri]['_ch'] = await self._connections[amqp_uri]['_conn'].channel()
                 channel = self._connections[amqp_uri]['_ch']
@@ -28,9 +30,9 @@ class AMQPHelper:
 
     async def publish(self, exchange_name, event_name, body):
         if self._exchanges[exchange_name]:
-            await self._exchanges[exchange_name].basic_publish(body, exchange=self.exchange_name, routing_key=event_name)
+            await self._exchanges[exchange_name].basic_publish(body, exchange=exchange_name, routing_key=event_name)
         else:
             raise ValueError('Channel not open for specified exchange. Check if existing connection to its server')
 
     def publish_sync(self, exchange_name, event_name, body):
-        asyncio.run(self.publish(event_name, body))
+        asyncio.run(self.publish(exchange_name, event_name, body))

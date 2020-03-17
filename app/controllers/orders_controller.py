@@ -1,3 +1,4 @@
+from ..services.orders import amqp
 from ..repositories import orders_repository
 from ..models.orders_db.Order import OrderSchema, OrderStatus
 from ..models.orders_db.OrderProduct import OrderProductSchema, OrderProduct
@@ -11,7 +12,9 @@ def get(order_id):
 
 def post(order):
     try:
-        new_order = orders_repository.add_order(OrderSchema.load(order, partial=True))
+        # Remove 'products' key, as it's not part of the Order entity, but of the OrderProduct relation
+        # Send event products
+        # Send event customer
         return OrderSchema().dump(new_order), 200
     except ValueError as error:
         return f'Error when storing order', 500

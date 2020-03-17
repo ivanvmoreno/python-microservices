@@ -1,3 +1,4 @@
+from ..modules.amqp_helper import AMQPHelper as amqp
 from ..repositories import customers_repository
 from ..models.customers_db.Customer import CustomerSchema
 

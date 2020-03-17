@@ -12,4 +12,4 @@ if __name__ == '__main__':
         resolver=RestyResolver('app.controllers.customers_controller'))
     app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
     Thread(target=handle_amqp_connection, args=[AMQP_URI, QUEUES_CUSTOMERS, AMQP_EXCHANGE]).start()
-    Thread(target=app.run, kwargs={ 'port': TCP_PORT_CUSTOMERS }).start()
+    Thread(target=app.run, kwargs={'port': TCP_PORT_CUSTOMERS}).start()
