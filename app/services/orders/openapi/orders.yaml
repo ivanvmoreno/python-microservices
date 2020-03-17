@@ -1,0 +1,181 @@
+openapi: 3.0.0
+
+info:
+  description: OpenAPI specification for the orders service
+  version: 1.0.0
+  title: Orders service OpenAPI contract
+
+servers:
+  - url: https://api.example.com/orders
+
+paths:
+  /:
+    post:
+      tags:
+        - Orders
+      summary: Creates an order
+      requestBody:
+        $ref: '#/components/requestBodies/CreateOrder'
+      responses:
+        200:
+          description: Returns the new order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderProperties'
+        500:
+          description: Error adding order
+  /{order_id}:
+    parameters:
+      - $ref: '#/components/parameters/order_id'
+    get:
+      tags:
+        - Orders
+      summary: Fetches an order
+      responses:
+        200:
+          description: Returns existing order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderProperties'
+        404: 
+          description: Order not found
+    delete:
+      tags:
+        - Orders
+      summary: Updates an existing order based on the received data
+      responses:
+        204:
+          description: Succesfully cancelled order
+        409:
+          description: Order cannot be cancelled
+  /{order_id}/products/:
+    parameters:
+      - $ref: '#/components/parameters/order_id'
+    post:
+      operationId: app.services.orders.controllers.orders_controller.add_product_to_order
+      tags:
+        - Orders
+        - Products
+      summary: Adds an existing product to an order
+      requestBody:
+        $ref: '#/components/requestBodies/CreateOrderProduct'
+      responses:
+        204:
+          description: Product added to order
+        500:
+          description: Error adding product to order
+    put:
+      operationId: app.services.orders.controllers.orders_controller.update_product_quantity
+      tags: 
+        - Orders
+        - Products
+      summary: Updates an order product quantity
+      requestBody:
+        $ref: '#/components/requestBodies/CreateOrderProduct'
+      responses:
+        200:
+          description: Updated product quantity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderProperties'
+        500: 
+          description: Error updating product in order
+  /{order_id}/products/{product_id}:
+    delete:
+      operationId: app.services.orders.controllers.orders_controller.delete_product_from_order
+      tags: 
+        - Orders
+        - Products
+      summary: Updates an order product quantity
+      parameters:
+        - $ref: '#/components/parameters/order_id'
+        - $ref: '#/components/parameters/product_id'
+      responses:
+        204:
+          description: Product removed from order
+        500:
+          description: Error removing product from order
+
+components:
+  parameters:
+    order_id:
+      name: order_id
+      description: Order ID
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/id'
+    product_id:
+      name: product_id
+      description: Product ID
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/id'
+  requestBodies:
+    CreateOrder:
+      description: Order details
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/OrderProperties'
+              - required:
+                  - products
+    CreateOrderProduct:
+      description: OrderProduct details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OrderProduct'
+  schemas:
+    OrderProperties:
+      description: Order entity properties
+      type: object
+      properties:
+        order_id:
+          $ref: '#/components/schemas/id'
+        customer_id:
+          $ref: '#/components/schemas/id'
+        date:
+          description: Order creation date
+          type: string
+          format: date-time
+        status:
+          description: Order current status
+          type: string
+          enum:
+            - cancelled
+            - paid
+            - shipped
+            - completed
+        products:
+          description: Order products
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderProduct'
+      required:
+        - order_id
+        - customer_id
+        - date
+        - status
+    OrderProduct:
+      description: OrderProduct entity properties
+      type: object
+      properties:
+        product_id:
+          $ref: '#/components/schemas/id'
+        quantity:
+          description: Product order quantity
+          type: integer
+          format: int32
+      required:
+        - product_id
+        - quantity
+    id:
+      description: Reusable ID property schema
+      type: integer
+      format: int32
