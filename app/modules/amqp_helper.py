@@ -1,10 +1,24 @@
 import aiormq
 import asyncio
+from threading import Lock
 from typing import *
 
 
-class AMQPHelper:
-    _connections: Dict[str, Dict]= {}
+class AMQPHelperMeta(type):
+    _instance = None
+    # Lock object for thread-safe implementation
+    _lock: Lock = Lock()
+
+    def __call__(cls):
+        with cls._lock:
+            if not cls._instance:
+                # Call to type.__new__ and type.__init__
+                cls._instance = super().__call__()
+            return cls._instance
+
+
+class AMQPHelper(metaclass=AMQPHelperMeta):
+    _connections: Dict[str, Dict] = {}
     # _exchanges holds the reference of a exchange to its parent channel
     _exchanges: Dict[str, Callable] = {}
 
