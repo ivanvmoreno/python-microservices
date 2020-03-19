@@ -1,5 +1,4 @@
 from ..modules.amqp_helper import AMQPHelper
-import asyncio
 import connexion
 from threading import Thread
 from flask_sqlalchemy import SQLAlchemy
@@ -25,18 +24,17 @@ class ServiceHelper:
         self._amqp_config = amqp_config
         self._server_port = server_port
 
-    def handle_amqp_connection(self):
-        loop = asyncio.new_event_loop()
+    def amqp_connect(self):
+        amqp = AMQPHelper()
         for amqp_uri, uri_config in self._amqp_config.items():
             for exchange_name, events_bindings in uri_config.items():
-                loop.run_until_complete(AMQPHelper().connect(amqp_uri, events_bindings, exchange_name))
-        # Locks execution thread
-        loop.run_forever()
+                amqp.connect(amqp_uri, events_bindings, exchange_name)
+            # Start consuming connection queues
+            Thread(target=amqp.start_consuming, args=[amqp_uri]).start()
 
     def run_webserver(self):
-        # Locks execution thread
-        self._app.run(port=self._server_port)
+        Thread(target=self._app.run, kwargs={'port': self._server_port}).start()
 
     def run(self):
-        Thread(target=self.handle_amqp_connection).start()
-        Thread(target=self.run_webserver).start()
+        self.run_webserver()
+        self.amqp_connect()

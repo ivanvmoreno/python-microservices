@@ -12,7 +12,8 @@ marshmallow-sqlalchemy = "*"
 marshmallow = "*"
 connexion = {extras = ["swagger-ui"],version = "*"}
 pymysql = "*"
-aiormq = "*"
+pika = "*"
+marshmallow-enum = "*"
 
 [requires]
 python_version = "3.8"

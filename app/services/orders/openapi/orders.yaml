@@ -121,10 +121,22 @@ components:
       content:
         application/json:
           schema:
-            allOf:
-              - $ref: '#/components/schemas/OrderProperties'
-              - required:
-                  - products
+            type: object
+            properties:
+              customer_id:
+                $ref: '#/components/schemas/id'
+              date:
+                description: Order creation date
+                type: string
+                format: date-time
+              products:
+                description: Order products
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderProduct'
+            required:
+              - customer_id
+              - products
     CreateOrderProduct:
       description: OrderProduct details
       content:
@@ -158,7 +170,6 @@ components:
           items:
             $ref: '#/components/schemas/OrderProduct'
       required:
-        - order_id
         - customer_id
         - date
         - status

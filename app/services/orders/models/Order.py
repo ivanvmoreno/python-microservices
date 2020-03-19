@@ -1,5 +1,6 @@
 from enum import Enum
 from datetime import datetime
+from marshmallow_enum import EnumField
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
@@ -25,10 +26,12 @@ class Order(db.Model):
     """
     customer_id = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, default=datetime.now(), nullable=False)
-    status = db.Column(db.Enum(OrderStatus), default=OrderStatus.PENDING, nullable=False)
+    status = db.Column(db.Enum(OrderStatus), default=OrderStatus.PENDING.name, nullable=False)
 
 
 class OrderSchema(ma.ModelSchema):
+    status = EnumField(OrderStatus)
+
     class Meta:
         model = Order
         sqla_session = db.session

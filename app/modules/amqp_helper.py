@@ -1,5 +1,4 @@
-import aiormq
-import asyncio
+import pika
 from threading import Lock
 from typing import *
 
@@ -22,28 +21,30 @@ class AMQPHelper(metaclass=AMQPHelperMeta):
     # _exchanges holds the reference of a exchange to its parent channel
     _exchanges: Dict[str, Callable] = {}
 
-    async def connect(self, amqp_uri, events_bindings: Dict[str, Callable], exchange_name):
+    def connect(self, amqp_uri, events_bindings: Dict[str, Callable], exchange_name):
         if exchange_name not in self._exchanges:
             if amqp_uri not in self._connections:
-                self._connections[amqp_uri] = { '_conn': await aiormq.connect(amqp_uri) }
-                self._connections[amqp_uri]['_ch'] = await self._connections[amqp_uri]['_conn'].channel()
+                self._connections[amqp_uri] = {'_conn': pika.BlockingConnection(pika.URLParameters(amqp_uri))}
+                self._connections[amqp_uri]['_ch'] = self._connections[amqp_uri]['_conn'].channel()
             channel = self._connections[amqp_uri]['_ch']
             # Declare direct exchange
-            await channel.exchange_declare(exchange=exchange_name, durable=True)
+            channel.exchange_declare(exchange=exchange_name, durable=True)
             for event_name, callback in events_bindings.items():
-                declared_queue = await channel.queue_declare(durable=True)
-                await channel.queue_bind(declared_queue.queue, exchange_name, routing_key=event_name)
-                # Start consumption of queue messages
-                await channel.basic_consume(declared_queue.queue, callback)
+                declared_queue = channel.queue_declare(queue=event_name)
+                channel.queue_bind(event_name, exchange_name, routing_key=event_name)
+                # Define queue callback function
+                channel.basic_consume(event_name, callback, auto_ack=True)
             self._exchanges[exchange_name] = channel
         else:
             raise ValueError('Already connected to server / exchange combination')
 
-    async def publish(self, exchange_name, event_name, body):
+    def publish(self, exchange_name, event_name, body):
         if self._exchanges[exchange_name]:
-            await self._exchanges[exchange_name].basic_publish(body, exchange=exchange_name, routing_key=event_name)
+            self._exchanges[exchange_name].basic_publish(
+                body=body, exchange=exchange_name, routing_key=event_name)
         else:
             raise ValueError('Channel not open for specified exchange. Check if existing connection to its server')
 
-    def publish_sync(self, exchange_name, event_name, body):
-        asyncio.run(self.publish(exchange_name, event_name, body))
+    def start_consuming(self, amqp_uri):
+        # Start consumption of queues
+        self._connections[amqp_uri]['_ch'].start_consuming()

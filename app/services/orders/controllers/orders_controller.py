@@ -1,16 +1,50 @@
-from ..repositories import orders_repository
+from app.modules.amqp_helper import AMQPHelper
+from app.config.messaging import AMQP_EXCHANGE
+from app.config.messaging.events.orders import *
 from ..models.Order import OrderSchema, OrderStatus
 from ..models.OrderProduct import OrderProductSchema
+from ..repositories import orders_repository
+
+amqp = AMQPHelper()
 
 
-async def cancel_order_cb(message):
-    print(" [x] %r:%r" % (message.delivery.routing_key, message.body))
-    await message.channel.basic_ack(message.delivery.delivery_tag)
+def cancel_order_cb(channel, method, properties, body):
+    """
+    CANCEL_ORDER event callback
+    """
+    try:
+        order_id = CancelOrderEvent.deserialize(body).order_id
+        order = orders_repository.set_order_status(order_id, OrderStatus.CANCELLED)
+        # ORDER_CANCELLED event dispatch
+        amqp.publish(AMQP_EXCHANGE, OrderEvents.ORDER_CANCELLED, order.client_id)
+    except ValueError as error:
+        print('Error cancelling order', body, error)
 
 
-async def confirm_order_cb(message):
-    print(" [x] %r:%r" % (message.delivery.routing_key, message.body))
-    await message.channel.basic_ack(message.delivery.delivery_tag)
+def confirm_order_cb(channel, method, properties, body):
+    """
+    CONFIRM_ORDER event callback
+    """
+    try:
+        order_id = ConfirmOrderEvent.deserialize(body).order_id
+        orders_repository.set_order_status(order_id, OrderStatus.PAID)
+        # ORDER_CONFIRMED event dispatch
+        amqp.publish(AMQP_EXCHANGE, OrderEvents.ORDER_CONFIRMED, body)
+        # SHIP_ORDER event dispatch
+        products = orders_repository.get_order_products(body)
+        amqp.publish(AMQP_EXCHANGE, OrderEvents.SHIP_ORDER, ShipOrderEvent(products).serialize())
+    except ValueError as error:
+        print('Error confirming order', body, error)
+
+
+def order_shipped_cb(channel, method, properties, body):
+    """
+    ORDER_SHIPPED event callback
+    """
+    try:
+        orders_repository.set_order_status(body, OrderStatus.SHIPPED)
+    except ValueError as error:
+        print('Error setting order as shipped', body, error)
 
 
 def get(order_id):
@@ -21,11 +55,12 @@ def get(order_id):
         return f'Order {order_id} not found', 404
 
 
-def post(order):
+def post(body):
     try:
-        # Remove 'products' key, as it's not part of the Order entity, but of the OrderProduct relation
-        # Send event products
-        # Send event customer
+        products = body.pop('products')
+        order = orders_repository.add_order(OrderSchema().load(body, partial=True))
+        # ORDER_CREATED event dispatch
+        amqp.publish(AMQP_EXCHANGE, OrderEvents.ORDER_CREATED, OrderCreatedEvent(order.order_id, products).serialize())
         return OrderSchema().dump(order), 200
     except ValueError as error:
         return f'Error when storing order', 500
@@ -44,7 +79,7 @@ def delete(order_id):
 
 def add_product_to_order(order_id, body):
     try:
-        new_order_product = orders_repository.add_product_to_order(OrderProductSchema().load(body))
+        orders_repository.add_product_to_order(OrderProductSchema().load(body))
         return 204
     except ValueError as error:
         return f'Error adding product to order {order_id}', 500

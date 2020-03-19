@@ -7,13 +7,21 @@ db = SQLAlchemy()
 
 def get_order(order_id):
     product = Order.query \
-        .filter(Order.product_id == order_id) \
+        .filter(Order.order == order_id) \
         .one_or_none()
 
     if product is not None:
         return product
     else:
         raise ValueError(f'Order {order_id} not found')
+
+
+def get_order_products(order_id):
+    products = OrderProduct.query \
+        .filter(OrderProduct.order_id == order_id) \
+        .all()
+
+    return products
 
 
 def delete_order(order_id):
@@ -27,6 +35,14 @@ def delete_order(order_id):
         return
     else:
         raise ValueError(f'Order {order_id} not found')
+
+
+def set_order_status(order_id, status):
+    order = get_order(order_id)
+    order.status = status
+    db.session.add(order)
+    db.session.commit()
+    return order
 
 
 def add_order(order):

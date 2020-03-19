@@ -106,7 +106,6 @@ components:
           type: integer
           format: int32
       required:
-        - product_id
         - name
         - price
     id:
