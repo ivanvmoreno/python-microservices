@@ -1,4 +1,4 @@
-from ..settings import amqp
+from ...settings import amqp
 from app.config.messaging import AMQP_EXCHANGE
 from app.config.messaging.events.orders import *
 from ..repositories import products_repository
@@ -23,7 +23,7 @@ def check_products_cb(message):
             # Update product reserved stock
             product_db.reserved_items -= product_quantity
             products_repository.update_product(product_db)
-            # CANCEL_ORDER event dispatch
+            # CONFIRM_ORDER event dispatch
             amqp.publish(AMQP_EXCHANGE, OrderEvents.CONFIRM_ORDER, event.order_id)
     except ValueError as error:
         print('Error checking customer billing status', body, error)

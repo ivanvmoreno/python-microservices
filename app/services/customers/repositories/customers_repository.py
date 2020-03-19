@@ -1,4 +1,4 @@
-from ..settings import db
+from ...settings import db
 from ..models.Customer import Customer
 
 

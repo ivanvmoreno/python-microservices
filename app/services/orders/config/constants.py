@@ -7,6 +7,6 @@ TCP_PORT = 8002
 OPENAPI_PATH = ('openapi/', 'orders.yaml')
 
 # Module containing implementations of OpenAPI operationIDs
-CONTROLLER_MODULE = 'app.services.orders.controllers.orders_controller'
+CONTROLLER_MODULE = '.controllers.orders_controller'
 
 DB_URI = getenv('DB_URI')

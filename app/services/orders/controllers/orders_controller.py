@@ -1,4 +1,4 @@
-from ..settings import amqp
+from ...settings import amqp
 from app.config.messaging import AMQP_EXCHANGE
 from app.config.messaging.events.orders import *
 from ..models.Order import OrderSchema, OrderStatus

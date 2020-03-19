@@ -7,6 +7,6 @@ TCP_PORT = 8003
 OPENAPI_PATH = ('openapi/', 'products.yaml')
 
 # Module containing implementations of OpenAPI operationIDs
-CONTROLLER_MODULE = 'app.services.products.controllers.products_controller'
+CONTROLLER_MODULE = '.controllers.products_controller'
 
 DB_URI = getenv('DB_URI')

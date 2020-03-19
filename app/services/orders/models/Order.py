@@ -1,4 +1,4 @@
-from ..settings import db, ma
+from ...settings import db, ma
 from enum import Enum
 from datetime import datetime
 from marshmallow_enum import EnumField

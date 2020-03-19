@@ -1,4 +1,4 @@
-from ..settings import db
+from ...settings import db
 from ..models.Order import Order
 from ..models.OrderProduct import OrderProduct
 

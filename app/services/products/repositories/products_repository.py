@@ -1,4 +1,4 @@
-from ..settings import db
+from ...settings import db
 from ..models.Product import Product
 
 def get_product(product_id):
