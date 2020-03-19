@@ -1,12 +1,25 @@
 from ..modules.amqp_helper import AMQPHelper
 import connexion
-from threading import Thread
+from threading import Thread, Lock
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from connexion.resolver import RestyResolver
 
 
-class ServiceHelper:
+class ServiceHelperMeta(type):
+    _instance = None
+    # Lock object for thread-safe implementation
+    _lock: Lock = Lock()
+
+    def __call__(cls, *args, **kwargs):
+        with cls._lock:
+            if not cls._instance:
+                # Call to type.__new__ and type.__init__
+                cls._instance = super().__call__(*args, **kwargs)
+            return cls._instance
+
+
+class ServiceHelper(metaclass=ServiceHelperMeta):
     def __init__(self, openapi_path, controller_name, db_uri, amqp_config, server_port):
         """
         :param openapi_path: tuple (spec directory, specification filename)
@@ -19,7 +32,9 @@ class ServiceHelper:
         self._connexion.add_api(openapi_path[1], resolver=RestyResolver(controller_name))
         self._app = self._connexion.app
         self._app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-        self._db = SQLAlchemy(self._app)
+        self._app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        # Service database connection instance
+        self.db = SQLAlchemy(self._app)
         self._ma = Marshmallow(self._app)
         self._amqp_config = amqp_config
         self._server_port = server_port

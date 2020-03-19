@@ -4,7 +4,7 @@ from os import getenv
 TCP_PORT = 8002
 
 # OpenAPI specifications directory (relative to 'app' module)
-OPENAPI_PATH = ('services/orders/openapi/', 'orders.yaml')
+OPENAPI_PATH = ('openapi/', 'orders.yaml')
 
 # Module containing implementations of OpenAPI operationIDs
 CONTROLLER_MODULE = 'app.services.orders.controllers.orders_controller'

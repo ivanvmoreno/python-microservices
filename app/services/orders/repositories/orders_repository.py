@@ -1,13 +1,11 @@
-from flask_sqlalchemy import SQLAlchemy
+from ..settings import db
 from ..models.Order import Order
 from ..models.OrderProduct import OrderProduct
-
-db = SQLAlchemy()
 
 
 def get_order(order_id):
     product = Order.query \
-        .filter(Order.order == order_id) \
+        .filter(Order.order_id == order_id) \
         .one_or_none()
 
     if product is not None:

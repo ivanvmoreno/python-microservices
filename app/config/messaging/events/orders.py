@@ -39,3 +39,8 @@ class ConfirmOrderEvent(EventBase):
 class OrderShippedEvent(EventBase):
     def __init__(self, order_id):
         self.order_id = order_id
+
+
+class OrderCancelledEvent(EventBase):
+    def __init__(self, customer_id):
+        self.customer_id = customer_id

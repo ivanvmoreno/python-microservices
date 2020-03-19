@@ -1,11 +1,7 @@
+from ..settings import db, ma
 from enum import Enum
 from datetime import datetime
 from marshmallow_enum import EnumField
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-
-db = SQLAlchemy()
-ma = Marshmallow()
 
 
 # Aliasing order status codes using an Enum

@@ -1,11 +1,9 @@
-from app.modules.amqp_helper import AMQPHelper
+from ..settings import amqp
 from app.config.messaging import AMQP_EXCHANGE
 from app.config.messaging.events.orders import *
 from ..models.Order import OrderSchema, OrderStatus
 from ..models.OrderProduct import OrderProductSchema
 from ..repositories import orders_repository
-
-amqp = AMQPHelper()
 
 
 def cancel_order_cb(channel, method, properties, body):
@@ -16,7 +14,7 @@ def cancel_order_cb(channel, method, properties, body):
         order_id = CancelOrderEvent.deserialize(body).order_id
         order = orders_repository.set_order_status(order_id, OrderStatus.CANCELLED)
         # ORDER_CANCELLED event dispatch
-        amqp.publish(AMQP_EXCHANGE, OrderEvents.ORDER_CANCELLED, order.client_id)
+        amqp.publish(AMQP_EXCHANGE, OrderEvents.ORDER_CANCELLED, OrderCancelledEvent(order.customer_id).serialize())
     except ValueError as error:
         print('Error cancelling order', body, error)
 
