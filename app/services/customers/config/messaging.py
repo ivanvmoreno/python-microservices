@@ -1,4 +1,5 @@
 from app.config.messaging import *
+from app.config.messaging.events.orders import *
 from ..controllers import customers_controller
 
 # AMQPHelper event bindings

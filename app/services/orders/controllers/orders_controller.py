@@ -6,11 +6,12 @@ from ..models.OrderProduct import OrderProductSchema
 from ..repositories import orders_repository
 
 
-def cancel_order_cb(channel, method, properties, body):
+def cancel_order_cb(message):
     """
     CANCEL_ORDER event callback
     """
     try:
+        body = message.body
         order_id = CancelOrderEvent.deserialize(body).order_id
         order = orders_repository.set_order_status(order_id, OrderStatus.CANCELLED)
         # ORDER_CANCELLED event dispatch
@@ -19,11 +20,12 @@ def cancel_order_cb(channel, method, properties, body):
         print('Error cancelling order', body, error)
 
 
-def confirm_order_cb(channel, method, properties, body):
+def confirm_order_cb(message):
     """
     CONFIRM_ORDER event callback
     """
     try:
+        body = message.body
         order_id = ConfirmOrderEvent.deserialize(body).order_id
         orders_repository.set_order_status(order_id, OrderStatus.PAID)
         # ORDER_CONFIRMED event dispatch
@@ -35,11 +37,12 @@ def confirm_order_cb(channel, method, properties, body):
         print('Error confirming order', body, error)
 
 
-def order_shipped_cb(channel, method, properties, body):
+def order_shipped_cb(message):
     """
     ORDER_SHIPPED event callback
     """
     try:
+        body = message.body
         orders_repository.set_order_status(body, OrderStatus.SHIPPED)
     except ValueError as error:
         print('Error setting order as shipped', body, error)
@@ -58,7 +61,8 @@ def post(body):
         products = body.pop('products')
         order = orders_repository.add_order(OrderSchema().load(body, partial=True))
         # ORDER_CREATED event dispatch
-        amqp.publish(AMQP_EXCHANGE, OrderEvents.ORDER_CREATED, OrderCreatedEvent(order.order_id, products).serialize())
+        amqp.publish(AMQP_EXCHANGE, OrderEvents.ORDER_CREATED, OrderCreatedEvent(
+            order.order_id, products, order.customer_id).serialize())
         return OrderSchema().dump(order), 200
     except ValueError as error:
         return f'Error when storing order', 500

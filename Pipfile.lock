@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "509c765196c0536fa3e1f15c160d45439d6a16731c872e52713e834e586e40b5"
+            "sha256": "736c690abde02f36f077fab63559dc52088cc8ba6abb1cf6016057b4624adb11"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,6 +16,14 @@
         ]
     },
     "default": {
+        "amqpstorm": {
+            "hashes": [
+                "sha256:039d96fd96916711c7bfc585744e4dc637ec8b8048314a45e2f341a77e33109d",
+                "sha256:c87b74c184ffd145e37a107bcd5a49e9efaaaf11107ec4466a0b61733506dbad"
+            ],
+            "index": "pypi",
+            "version": "==2.7.2"
+        },
         "attrs": {
             "hashes": [
                 "sha256:08a96c641c3a74e44eb59afb61a24f2cb9f4d7188748e76ba4bb5edfa3cb7d1c",
@@ -197,13 +205,12 @@
             ],
             "version": "==0.2.8"
         },
-        "pika": {
+        "pamqp": {
             "hashes": [
-                "sha256:4e1a1a6585a41b2341992ec32aadb7a919d649eb82904fd8e4a4e0871c8cf3af",
-                "sha256:9fa76ba4b65034b878b2b8de90ff8660a59d925b087c5bb88f8fdbb4b64a1dbf"
+                "sha256:2f81b5c186f668a67f165193925b6bfd83db4363a6222f599517f29ecee60b02",
+                "sha256:5cd0f5a85e89f20d5f8e19285a1507788031cfca4a9ea6f067e3cf18f5e294e8"
             ],
-            "index": "pypi",
-            "version": "==1.1.0"
+            "version": "==2.3.0"
         },
         "pymysql": {
             "hashes": [

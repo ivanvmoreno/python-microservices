@@ -1,28 +1,28 @@
-from app.config.messaging import AMQP_EXCHANGE, OrderEvents
-from app.modules.amqp_helper import AMQPHelper
+from ..settings import amqp
+from app.config.messaging import AMQP_EXCHANGE
+from app.config.messaging.events.orders import *
 from ..repositories import customers_repository
 from ..models.Customer import CustomerSchema
 
-amqp = AMQPHelper()
 
-
-async def order_created_cb(message):
+def order_created_cb(message):
     """
     ORDER_CREATED event callback
     """
     try:
-        customer = customers_repository.get_customer(message.body.customer_id)
+        body = message.body
+        event = OrderCreatedEvent.deserialize(body)
+        customer = customers_repository.get_customer_by_id(event.customer_id)
         # Check if unpaid previous invoices
         if customer.credit_standing > 0:
             # CHECK_ORDER_PRODUCTS_STOCK event dispatch
-            amqp.publish_sync(AMQP_EXCHANGE, OrderEvents.CHECK_ORDER_PRODUCTS_STOCK, message.body.products)
+            amqp.publish(
+                AMQP_EXCHANGE, OrderEvents.CHECK_ORDER_PRODUCTS_STOCK, CheckOrderProducts(event.products, event.order_id).serialize())
         else:
             # CANCEL_ORDER event dispatch
-            amqp.publish_sync(AMQP_EXCHANGE, OrderEvents.CANCEL_ORDER, message.body.order_id)
+            amqp.publish(AMQP_EXCHANGE, OrderEvents.CANCEL_ORDER, CancelOrderEvent(event.order_id).serialize())
     except ValueError as error:
-        print('Error checking customer billing status', message.body, error)
-    finally:
-        await message.channel.basic_ack(message.delivery.delivery_tag)
+        print('Error checking customer billing status', body, error)
 
 
 def get(email):

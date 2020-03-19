@@ -16,9 +16,10 @@ class OrderEvents:
 
 
 class OrderCreatedEvent(EventBase):
-    def __init__(self, order_id, products):
+    def __init__(self, order_id, products, customer_id):
         self.order_id = order_id
         self.products = products
+        self.customer_id = customer_id
 
 
 class ShipOrderEvent(EventBase):
@@ -44,3 +45,8 @@ class OrderShippedEvent(EventBase):
 class OrderCancelledEvent(EventBase):
     def __init__(self, customer_id):
         self.customer_id = customer_id
+
+class CheckOrderProducts(EventBase):
+    def __init__(self, products, order_id):
+        self.order_id = order_id
+        self.products = products

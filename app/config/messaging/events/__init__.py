@@ -8,4 +8,4 @@ class EventBase:
     @classmethod
     def deserialize(cls, body):
         # Call child class constructor, passing JSON keys as keyword args
-        return cls.__call__(**json.loads(body.decode('ascii')))
+        return cls.__call__(**json.loads(body))

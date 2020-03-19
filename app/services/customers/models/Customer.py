@@ -1,8 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-from flask_marshmallow import Marshmallow
-
-db = SQLAlchemy()
-ma = Marshmallow()
+from ..settings import db, ma
 
 
 class Customer(db.Model):

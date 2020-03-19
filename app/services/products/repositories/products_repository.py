@@ -1,8 +1,5 @@
-from flask_sqlalchemy import SQLAlchemy
+from ..settings import db
 from ..models.Product import Product
-
-db = SQLAlchemy()
-
 
 def get_product(product_id):
     product = Product.query \
