@@ -1,0 +1,38 @@
+version: '3.7'
+
+x-base-build:
+  &base-build
+  build:
+    context: .
+    cache_from:
+      - python:buster
+
+x-base-env:
+  &base-env
+  AMQP_URI: ${AMQP_URI}
+  DB_URI: ${DB_URI}
+
+services:
+  customers-service:
+    << : *base-build
+    environment:
+      << : *base-env
+      SERVICE_NAME: customers
+    ports:
+      - 8001:8001
+
+  orders-service:
+    <<: *base-build
+    environment:
+      <<: *base-env
+      SERVICE_NAME: orders
+    ports:
+        - 8002:8002
+
+  products-service:
+    <<: *base-build
+    environment:
+      <<: *base-env
+      SERVICE_NAME: products
+    ports:
+      - 8003:8003
