@@ -12,4 +12,6 @@ COPY app/ /tmp/app/
 
 WORKDIR /tmp
 
+EXPOSE 8000
+
 CMD python -m app.services.run

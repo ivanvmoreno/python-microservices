@@ -19,7 +19,7 @@ services:
       << : *base-env
       SERVICE_NAME: customers
     ports:
-      - 8001:8001
+      - 8001:8000
 
   orders-service:
     <<: *base-build
@@ -27,7 +27,7 @@ services:
       <<: *base-env
       SERVICE_NAME: orders
     ports:
-        - 8002:8002
+        - 8002:8000
 
   products-service:
     <<: *base-build
@@ -35,4 +35,4 @@ services:
       <<: *base-env
       SERVICE_NAME: products
     ports:
-      - 8003:8003
+      - 8003:8000

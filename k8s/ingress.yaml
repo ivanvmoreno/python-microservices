@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: online-retailer-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: customers.online-retailer
+    http:
+      paths:
+        backend:
+          serviceName: customers-service
+          servicePort: 80
+  - host: orders.online-retailer
+    http:
+      paths:
+        backend:
+          serviceName: orders-service
+          servicePort: 80
+  - host: products.online-retailer
+    http:
+      paths:
+        backend:
+          serviceName: products-service
+          servicePort: 80

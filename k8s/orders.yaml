@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-service
+spec:
+  selector:
+    app: orders-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: orders-service
+  template:
+    metadata:
+      name: orders-pod
+      labels:
+        app: orders-service
+    spec:
+      containers:
+      - name: orders-container
+        image: busybox
+        env:
+        - name: SERVICE_NAME
+          value: orders
+        - name: AMQP_URI
+          valueFrom:
+            secretKeyRef:
+              name: common-secrets
+              key: AMQP_URI
+        - name: DB_URI
+          valueFrom:
+            secretKeyRef:
+              name: orders-secrets
+              key: DB_URI

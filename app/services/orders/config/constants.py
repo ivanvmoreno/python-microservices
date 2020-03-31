@@ -1,8 +1,5 @@
 from os import getenv
 
-# Flask web server TCP port
-TCP_PORT = 8002
-
 # OpenAPI specifications directory (relative to 'app' module)
 OPENAPI_PATH = ('openapi/', 'orders.yaml')
 

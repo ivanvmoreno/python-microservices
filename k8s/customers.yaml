@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: customers-service
+spec:
+  selector:
+    app: customers-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customers-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: customers-service
+  template:
+    metadata:
+      name: customers-pod
+      labels:
+        app: customers-service
+    spec:
+      containers:
+      - name: customers-container
+        image: busybox
+        env:
+        - name: SERVICE_NAME
+          value: customers
+        - name: AMQP_URI
+          valueFrom:
+            secretKeyRef:
+              name: common-secrets
+              key: AMQP_URI
+        - name: DB_URI
+          valueFrom:
+            secretKeyRef:
+              name: customers-secrets
+              key: DB_URI

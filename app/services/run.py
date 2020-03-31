@@ -1,4 +1,5 @@
 from os import getenv
+from threading import Thread
 from importlib import import_module
 
 # Absolute path to service package
@@ -6,8 +7,8 @@ base_path = f'app.services.{getenv("SERVICE_NAME")}'
 
 constants = import_module(f'{base_path}.config.constants')
 messaging = import_module(f'{base_path}.config.messaging')
+from app.config.constants import TCP_PORT
 from .settings import amqp, app, connexion
-from threading import Thread
 from connexion.resolver import RestyResolver
 
 
@@ -22,7 +23,7 @@ def amqp_connect():
 def flask_serve():
     # Bind API operations
     connexion.add_api(constants.OPENAPI_PATH[1], resolver=RestyResolver(f'{base_path}{constants.CONTROLLER_MODULE}'))
-    app.run(port=constants.TCP_PORT)
+    app.run(port=TCP_PORT)
 
 
 if __name__ == '__main__':
